@@ -23,7 +23,7 @@ Distributed as-is; no warranty is given.
 Modified: Nicolas Borla, 20.01.2019
 ******************************************************************************/
 
-#include "LSM9DS1.h"
+#include "LSM9DS1_i2c.h"
 #include "LSM9DS1_Registers.h"
 #include "LSM9DS1_Types.h"
 //#include <Wire.h> // Wire library is used for I2C
@@ -44,7 +44,16 @@ LSM9DS1::LSM9DS1(PinName sda, PinName scl, uint8_t xgAddr, uint8_t mAddr)
     :i2c(sda, scl)
 {
     init(IMU_MODE_I2C, xgAddr, mAddr); // dont know about 0xD6 or 0x3B
+    begin();
 }
+
+LSM9DS1::LSM9DS1(PinName sda, PinName scl)
+    :i2c(sda, scl)
+{
+    init(IMU_MODE_I2C, 0xD6, 0x3C); // dont know about 0xD6 or 0x3B
+    begin();
+}
+
 /*
 LSM9DS1::LSM9DS1()
 {
@@ -67,17 +76,21 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     settings.gyro.enableX = true;
     settings.gyro.enableY = true;
     settings.gyro.enableZ = true;
-    // gyro scale can be 245, 500, or 2000
-    settings.gyro.scale = 245;
-    // gyro sample rate: value between 1-6
+    // gyro scale can be 245, 500, or 2000 dps (degree per second)
+    settings.gyro.scale = 500;
+    // gyro sample rate: value between 1-6 in Hz
     // 1 = 14.9    4 = 238
     // 2 = 59.5    5 = 476
     // 3 = 119     6 = 952
-    settings.gyro.sampleRate = 6;
+    settings.gyro.sampleRate = 5;
     // gyro cutoff frequency: value between 0-3
     // Actual value of cutoff frequency depends
     // on sample rate.
-    settings.gyro.bandwidth = 0;
+    // @476 Hz: 0 ->  21 Hz only if LPF2 is enabled, to do so you need to set xgWriteByte(CTRL_REG2_G, 0x02) to enable LPF 2, pmic 11.09.2019 
+    //          1 ->  28 Hz
+    //          2 ->  57 Hz
+    //          3 -> 100 Hz
+    settings.gyro.bandwidth = 1; 
     settings.gyro.lowPowerEnable = false;
     settings.gyro.HPFEnable = false;
     // Gyro HPF cutoff frequency: value between 0-9
@@ -100,12 +113,12 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 1 = 10 Hz    4 = 238 Hz
     // 2 = 50 Hz    5 = 476 Hz
     // 3 = 119 Hz   6 = 952 Hz
-    settings.accel.sampleRate = 6;
+    settings.accel.sampleRate = 5;
     // Accel cutoff freqeuncy can be any value between -1 - 3. 
     // -1 = bandwidth determined by sample rate
     // 0 = 408 Hz   2 = 105 Hz
     // 1 = 211 Hz   3 = 50 Hz
-    settings.accel.bandwidth = -1;
+    settings.accel.bandwidth = 3;
     settings.accel.highResEnable = false;
     // accelHighResBandwidth can be any value between 0-3
     // LP cutoff is set to a factor of sample rate
@@ -122,12 +135,12 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 2 = 2.5 Hz    6 = 40 Hz
     // 3 = 5 Hz      7 = 80 Hz
     settings.mag.sampleRate = 7;
-    settings.mag.tempCompensationEnable = false;
+    settings.mag.tempCompensationEnable = true;
     // magPerformance can be any value between 0-3
     // 0 = Low power mode      2 = high performance
     // 1 = medium performance  3 = ultra-high performance
-    settings.mag.XYPerformance = 3;
-    settings.mag.ZPerformance = 3;
+    settings.mag.XYPerformance = 2;
+    settings.mag.ZPerformance = 2;
     settings.mag.lowPowerEnable = false;
     // magOperatingMode can be 0-2
     // 0 = continuous conversion
@@ -191,6 +204,16 @@ uint16_t LSM9DS1::begin()
     return whoAmICombined;
 }
 
+float LSM9DS1::readGyroX(){return gyroX;}
+float LSM9DS1::readGyroY(){return gyroY;}
+float LSM9DS1::readGyroZ(){return gyroZ;}
+float LSM9DS1::readAccX(){return accX;}
+float LSM9DS1::readAccY(){return accY;}
+float LSM9DS1::readAccZ(){return accZ;}
+float LSM9DS1::readMagX(){return magX;}
+float LSM9DS1::readMagY(){return magY;}
+float LSM9DS1::readMagZ(){return magZ;}
+
 void LSM9DS1::initGyro()
 {
     uint8_t tempRegValue = 0;
@@ -224,7 +247,7 @@ void LSM9DS1::initGyro()
     // [0][0][0][0][INT_SEL1][INT_SEL0][OUT_SEL1][OUT_SEL0]
     // INT_SEL[1:0] - INT selection configuration
     // OUT_SEL[1:0] - Out selection configuration
-    xgWriteByte(CTRL_REG2_G, 0x00); 
+    xgWriteByte(CTRL_REG2_G, 0x02); // use xgWriteByte(CTRL_REG2_G, 0x00); to disable LPF 2, pmic 11.09.2019 
     
     // CTRL_REG3_G (Default value: 0x00)
     // [LP_mode][HP_EN][0][0][HPCF3_G][HPCF2_G][HPCF1_G][HPCF0_G]
@@ -345,20 +368,20 @@ void LSM9DS1::calibrate(bool autoCalc)
     // Turn on FIFO and set threshold to 32 samples
     enableFIFO(true);
     setFIFO(FIFO_THS, 0x1F);
-    while (samples < 0x1F)
+    while (samples < 0x7F)
     {
         samples = (xgReadByte(FIFO_SRC) & 0x3F); // Read number of stored samples
     }
     for(ii = 0; ii < samples ; ii++) 
     {   // Read the gyro data stored in the FIFO
-        readGyro();
+        updateGyro();
         gBiasRawTemp[0] += gx;
         gBiasRawTemp[1] += gy;
         gBiasRawTemp[2] += gz;
-        readAccel();
+        updateAcc();
         aBiasRawTemp[0] += ax;
         aBiasRawTemp[1] += ay;
-        aBiasRawTemp[2] += az - (int16_t)(1./aRes); // Assumes sensor facing up!
+        aBiasRawTemp[2] += az - (int32_t)(1.0f/aRes); // Assumes sensor facing up!
     }  
     for (ii = 0; ii < 3; ii++)
     {
@@ -382,9 +405,8 @@ void LSM9DS1::calibrateMag(bool loadIn)
     
     for (i=0; i<128; i++)
     {
-        while (!magAvailable())
-            ;
-        readMag();
+        while (!magAvailable());
+        updateMag();
         int16_t magTemp[3] = {0, 0, 0};
         magTemp[0] = mx;        
         magTemp[1] = my;
@@ -430,7 +452,15 @@ void LSM9DS1::initMag()
     if (settings.mag.tempCompensationEnable) tempRegValue |= (1<<7);
     tempRegValue |= (settings.mag.XYPerformance & 0x3) << 5;
     tempRegValue |= (settings.mag.sampleRate & 0x7) << 2;
-    mWriteByte(CTRL_REG1_M, tempRegValue);
+    // mWriteByte(CTRL_REG1_M, tempRegValue); 
+    // pmic 21.09.2019, settings now static
+    // use 0xC2 for temperature compensation on, Fast ODR -> 300 Hz undocumented mode high performance
+    // use 0x42 for temperature compensation off, Fast ODR -> 300 Hz undocumented mode high performance
+    // use 0xE2 for temperature compensation on, Fast ODR -> 155 Hz undocumented mode ultra high performance
+    // use 0x62 for temperature compensation off, Fast ODR -> 155 Hz undocumented mode ultra high performance
+    // use 0xA2 for temperature compensation on, Fast ODR -> 155 Hz undocumented mode medium performance
+    // use 0x22 for temperature compensation off, Fast ODR -> 155 Hz undocumented mode medium performance
+    mWriteByte(CTRL_REG1_M, 0xC2); 
     
     // CTRL_REG2_M (Default value 0x00)
     // [0][FS1][FS0][0][REBOOT][SOFT_RST][0][0]
@@ -470,7 +500,7 @@ void LSM9DS1::initMag()
     // [0][0][0][0][OMZ1][OMZ0][BLE][0]
     // OMZ[1:0] - Z-axis operative mode selection
     //  00:low-power mode, 01:medium performance
-    //  10:high performance, 10:ultra-high performance
+    //  10:high performance, 11:ultra-high performance
     // BLE - Big/little endian data
     tempRegValue = 0;
     tempRegValue = (settings.mag.ZPerformance & 0x3) << 2;
@@ -513,7 +543,7 @@ uint8_t LSM9DS1::magAvailable(lsm9ds1_axis axis)
     return ((status & (1<<axis)) >> axis);
 }
 
-void LSM9DS1::readAccel()
+void LSM9DS1::updateAcc()
 {
     uint8_t temp[6]; // We'll read six bytes from the accelerometer into temp   
     xgReadBytes(OUT_X_L_XL, temp, 6); // Read 6 bytes, beginning at OUT_X_L_XL
@@ -531,7 +561,7 @@ void LSM9DS1::readAccel()
     accZ = static_cast<float>(az)/32768.0f*2.0f*9.81f;
 }
 
-int16_t LSM9DS1::readAccel(lsm9ds1_axis axis)
+int16_t LSM9DS1::updateAcc(lsm9ds1_axis axis)
 {
     uint8_t temp[2];
     int16_t value;
@@ -544,7 +574,7 @@ int16_t LSM9DS1::readAccel(lsm9ds1_axis axis)
     return value;
 }
 
-void LSM9DS1::readMag()
+void LSM9DS1::updateMag()
 {
     uint8_t temp[6]; // We'll read six bytes from the mag into temp 
     mReadBytes(OUT_X_L_M, temp, 6); // Read 6 bytes, beginning at OUT_X_L_M
@@ -557,7 +587,7 @@ void LSM9DS1::readMag()
     magZ = static_cast<float>(mz)/32768.0f*4.0f;
 }
 
-int16_t LSM9DS1::readMag(lsm9ds1_axis axis)
+int16_t LSM9DS1::updateMag(lsm9ds1_axis axis)
 {
     uint8_t temp[2];
     mReadBytes(OUT_X_L_M + (2 * axis), temp, 2);
@@ -571,7 +601,7 @@ void LSM9DS1::readTemp()
     temperature = ((int16_t)temp[1] << 8) | temp[0];
 }
 
-void LSM9DS1::readGyro()
+void LSM9DS1::updateGyro()
 {
     uint8_t temp[6]; // We'll read six bytes from the gyro into temp
     xgReadBytes(OUT_X_L_G, temp, 6); // Read 6 bytes, beginning at OUT_X_L_G
@@ -584,12 +614,12 @@ void LSM9DS1::readGyro()
         gy -= gBiasRaw[Y_AXIS];
         gz -= gBiasRaw[Z_AXIS];
     }
-    gyroX = static_cast<float>(gx)/32768.0f*245.0f*3.14159265358979323846f/180.0f;
-    gyroY = static_cast<float>(gy)/32768.0f*245.0f*3.14159265358979323846f/180.0f;
-    gyroZ = static_cast<float>(gz)/32768.0f*245.0f*3.14159265358979323846f/180.0f;
+    gyroX = static_cast<float>(gx)/32768.0f*(float)settings.gyro.scale*3.14159265358979323846f/180.0f * 1.17f; // measured correction 1.17, pmic 04.09.2019
+    gyroY = static_cast<float>(gy)/32768.0f*(float)settings.gyro.scale*3.14159265358979323846f/180.0f * 1.17f;
+    gyroZ = static_cast<float>(gz)/32768.0f*(float)settings.gyro.scale*3.14159265358979323846f/180.0f * 1.17f;
 }
 
-int16_t LSM9DS1::readGyro(lsm9ds1_axis axis)
+int16_t LSM9DS1::updateGyro(lsm9ds1_axis axis)
 {
     uint8_t temp[2];
     int16_t value;
@@ -763,12 +793,12 @@ void LSM9DS1::setMagODR(uint8_t mRate)
 
 void LSM9DS1::calcgRes()
 {
-    gRes = ((float) settings.gyro.scale) / 32768.0;
+    gRes = ((float) settings.gyro.scale) / 32768.0f;
 }
 
 void LSM9DS1::calcaRes()
 {
-    aRes = ((float) settings.accel.scale) / 32768.0;
+    aRes = ((float) settings.accel.scale) / 32768.0f;
 }
 
 void LSM9DS1::calcmRes()
@@ -1017,10 +1047,12 @@ uint8_t LSM9DS1::xgReadByte(uint8_t subAddress)
 {
     // Whether we're using I2C or SPI, read a byte using the
     // gyro-specific I2C address or SPI CS pin.
+	
     if (settings.device.commInterface == IMU_MODE_I2C)
         return I2CreadByte(_xgAddress, subAddress);
     else if (settings.device.commInterface == IMU_MODE_SPI)
         return SPIreadByte(_xgAddress, subAddress);
+	return 0;
 }
 
 void LSM9DS1::xgReadBytes(uint8_t subAddress, uint8_t * dest, uint8_t count)
@@ -1042,6 +1074,7 @@ uint8_t LSM9DS1::mReadByte(uint8_t subAddress)
         return I2CreadByte(_mAddress, subAddress);
     else if (settings.device.commInterface == IMU_MODE_SPI)
         return SPIreadByte(_mAddress, subAddress);
+	return 0;
 }
 
 void LSM9DS1::mReadBytes(uint8_t subAddress, uint8_t * dest, uint8_t count)
@@ -1159,7 +1192,7 @@ uint8_t LSM9DS1::I2CreadByte(uint8_t address, uint8_t subAddress)
     return data;                             // Return data read from slave register
     */
     char data;
-    char temp[1] = {subAddress};
+    char temp[2] = {subAddress};
     
     i2c.write(address, temp, 1);
     //i2c.write(address & 0xFE);
@@ -1207,3 +1240,5 @@ uint8_t LSM9DS1::I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * des
     }
     return count;
 }
+
+

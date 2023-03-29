@@ -51,7 +51,7 @@ public:
     
     // We'll store the gyro, accel, and magnetometer readings in a series of
     // public class variables. Each sensor gets three variables -- one for each
-    // axis. Call readGyro(), readAccel(), and readMag() first, before using
+    // axis. Call updateGyro(), updateAcc(), and updateMag() first, before using
     // these variables!
     // These values are the RAW signed 16-bit readings from the sensors.
     int16_t gx, gy, gz; // x, y, and z axis readings of the gyroscope
@@ -61,9 +61,11 @@ public:
     float gBias[3], aBias[3], mBias[3];
     int16_t gBiasRaw[3], aBiasRaw[3], mBiasRaw[3];
     
+    /*
     float gyroX, gyroY, gyroZ; // x, y, and z axis readings of the gyroscope (float value)
     float accX, accY, accZ; // x, y, and z axis readings of the accelerometer (float value)
     float magX, magY, magZ; // x, y, and z axis readings of the magnetometer (float value)
+    */
     
     // LSM9DS1 -- LSM9DS1 class constructor
     // The constructor will set up a handful of private variables, and set the
@@ -78,6 +80,7 @@ public:
     
     */
     LSM9DS1(PinName sda, PinName scl, uint8_t xgAddr, uint8_t mAddr);
+    LSM9DS1(PinName sda, PinName scl);
     //LSM9DS1(interface_mode interface, uint8_t xgAddr, uint8_t mAddr);
     //LSM9DS1();
        
@@ -87,6 +90,16 @@ public:
     * in the IMUSettings struct will take effect after calling this function.
     */
     uint16_t begin();
+    
+    float readGyroX();
+    float readGyroY();
+    float readGyroZ();
+    float readAccX();
+    float readAccY();
+    float readAccZ();
+    float readMagX();
+    float readMagY();
+    float readMagZ();
     
     void calibrate(bool autoCalc = true);
     void calibrateMag(bool loadIn = true);
@@ -124,53 +137,53 @@ public:
     */
     uint8_t magAvailable(lsm9ds1_axis axis = ALL_AXIS);
     
-    /** readGyro() -- Read the gyroscope output registers.
+    /** updateGyro() -- Read the gyroscope output registers.
     * This function will read all six gyroscope output registers.
     * The readings are stored in the class' gx, gy, and gz variables. Read
-    * those _after_ calling readGyro().
+    * those _after_ calling updateGyro().
     */
-    void readGyro();
+    void updateGyro();
     
-    /** int16_t readGyro(axis) -- Read a specific axis of the gyroscope.
+    /** int16_t updateGyro(axis) -- Read a specific axis of the gyroscope.
     * [axis] can be any of X_AXIS, Y_AXIS, or Z_AXIS.
     * Input:
     *  - axis: can be either X_AXIS, Y_AXIS, or Z_AXIS.
     * Output:
     *  A 16-bit signed integer with sensor data on requested axis.
     */
-    int16_t readGyro(lsm9ds1_axis axis);
+    int16_t updateGyro(lsm9ds1_axis axis);
     
-    /** readAccel() -- Read the accelerometer output registers.
+    /** updateAcc() -- Read the accelerometer output registers.
     * This function will read all six accelerometer output registers.
     * The readings are stored in the class' ax, ay, and az variables. Read
-    * those _after_ calling readAccel().
+    * those _after_ calling updateAcc().
     */
-    void readAccel();
+    void updateAcc();
     
-    /** int16_t readAccel(axis) -- Read a specific axis of the accelerometer.
+    /** int16_t updateAcc(axis) -- Read a specific axis of the accelerometer.
     * [axis] can be any of X_AXIS, Y_AXIS, or Z_AXIS.
     * Input:
     *  - axis: can be either X_AXIS, Y_AXIS, or Z_AXIS.
     * Output:
     *  A 16-bit signed integer with sensor data on requested axis.
     */
-    int16_t readAccel(lsm9ds1_axis axis);
+    int16_t updateAcc(lsm9ds1_axis axis);
     
-    /** readMag() -- Read the magnetometer output registers.
+    /** updateMag() -- Read the magnetometer output registers.
     * This function will read all six magnetometer output registers.
     * The readings are stored in the class' mx, my, and mz variables. Read
-    * those _after_ calling readMag().
+    * those _after_ calling updateMag().
     */
-    void readMag();
+    void updateMag();
     
-    /** int16_t readMag(axis) -- Read a specific axis of the magnetometer.
+    /** int16_t updateMag(axis) -- Read a specific axis of the magnetometer.
     * [axis] can be any of X_AXIS, Y_AXIS, or Z_AXIS.
     * Input:
     *  - axis: can be either X_AXIS, Y_AXIS, or Z_AXIS.
     * Output:
     *  A 16-bit signed integer with sensor data on requested axis.
     */
-    int16_t readMag(lsm9ds1_axis axis);
+    int16_t updateMag(lsm9ds1_axis axis);
 
     /** readTemp() -- Read the temperature output register.
     * This function will read two temperature output registers.
@@ -556,6 +569,11 @@ protected:
     
 private:
     I2C i2c;
+    float gyroX, gyroY, gyroZ; // x, y, and z axis readings of the gyroscope (float value)
+    float accX, accY, accZ; // x, y, and z axis readings of the accelerometer (float value)
+    float magX, magY, magZ; // x, y, and z axis readings of the magnetometer (float value)
 };
 
 #endif // SFE_LSM9DS1_H //
+
+

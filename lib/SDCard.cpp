@@ -1,20 +1,12 @@
+#include "SDCard.h"
 
-
-
-#include "SD_interface.h"
-
-
-
-
-
-SDCARD::SDCARD() : fs("sd"), _sd(PC_12, PC_11, PC_10, PD_2){
+SDCard::SDCard() : fs("sd"), _sd(PC_12, PC_11, PC_10, PD_2){
     
     init_success = 0;//nothing special here
-
 }
 
 
-bool SDCARD::init(){
+bool SDCard::init() {
     if (0 != _sd.init()) {
         //printf("Init failed \n");
         return 0;
@@ -30,7 +22,7 @@ bool SDCARD::init(){
         return 0;
     }
     fflush(stdout);
-    mkdir("/sd/data",0777);
+    mkdir("/sd/data", 0777);
     
     int i = 0;
     
@@ -59,7 +51,7 @@ bool SDCARD::init(){
 }
 
 
-bool SDCARD::write2sd(char *data){
+bool SDCard::write2sd(char *data){
     if(!init_success) return 0;
 
     //FILE* fp = fopen(path, "a");
@@ -72,7 +64,7 @@ bool SDCARD::write2sd(char *data){
     return 1;
 }
 
-bool SDCARD::writeln(){
+bool SDCard::writeln(){
     if(!init_success) return 0;
 
     char tmp[] = "\n";
@@ -83,7 +75,7 @@ bool SDCARD::writeln(){
 }
 
 
-bool SDCARD::close(){
+bool SDCard::close(){
     if(!init_success) return 0; //must be here else expect to have crashes
 
     fclose(fp);

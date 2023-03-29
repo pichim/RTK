@@ -1,16 +1,15 @@
-#ifndef SD_INTERFACE_H_
-#define SD_INTERFACE_H_
+#ifndef SDCARD_H_
+#define SDCARD_H_
 
-
-#include "mbed.h"
-#include "SDBlockDevice.h"
-#include "FATFileSystem.h"
+#include <mbed.h>
+#include <SDBlockDevice.h>
+#include <FATFileSystem.h>
 
 #define MOUNT_PATH "sd"
 
-class SDCARD{
+class SDCard{
     public:
-    SDCARD();
+    SDCard();
 
     bool init();
     bool write2sd(char* data);
@@ -23,8 +22,6 @@ class SDCARD{
     FATFileSystem fs;
     SDBlockDevice _sd;
     FILE* fp;
-
-
 };
 
-#endif
+#endif /* SDCARD_H_ */
