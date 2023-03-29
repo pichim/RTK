@@ -6,6 +6,7 @@ main branch for RTK-GPS implenetation for Drone
 
 #include "mbed.h"
 #include "SD_interface.h"
+#include "LSM9DS1.h"
 
 
 
@@ -28,11 +29,11 @@ time_t date2sec(uint16_t yyyy_, uint8_t mm_, uint8_t dd_, uint8_t hh_, uint8_t m
 
 int main(){
     //
-    set_time(date2sec(2023, 3, 25, 13, 55, 40));  // Set RTC time
+    set_time(date2sec(2023, 3, 29, 14, 30, 0));  // Set RTC time
 
     SDCARD sd;
     if(!sd.init()){
-        printf("SD init failed\n"); //if this fails all operations will be ignored(in case you wanna use it without sd card)
+        printf("SD init failed\n"); //if this fails all operations will be ignored (in case you wanna use it without sd card)
     }
     // define a header to know what values go where
     char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";

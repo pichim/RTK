@@ -16,17 +16,17 @@ SDCARD::SDCARD() : fs("sd"), _sd(PC_12, PC_11, PC_10, PD_2){
 
 bool SDCARD::init(){
     if (0 != _sd.init()) {
-        printf("Init failed \n");
+        //printf("Init failed \n");
         return 0;
     }
     if (0 != _sd.frequency(12000000)) {
-        printf("Error setting frequency \n");
+        //printf("Error setting frequency \n");
     }
 
     fflush(stdout);
 
     if(fs.mount(&_sd) != 0){
-        printf("mount failed\n");
+        //printf("mount failed\n");
         return 0;
     }
     fflush(stdout);
@@ -82,7 +82,10 @@ bool SDCARD::writeln(){
     return 1;
 }
 
+
 bool SDCARD::close(){
+    if(!init_success) return 0; //must be here else expect to have crashes
+
     fclose(fp);
     if(0 != _sd.deinit()){
         return 0;
