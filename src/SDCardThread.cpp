@@ -1,13 +1,17 @@
 #include "SDCardThread.h"
 #include <chrono>
 
-SDCardThread::SDCardThread(Data_t& data) :
+SDCardThread::SDCardThread(Data& data) :
     m_data(data),
+    m_additional_led(SDCARD_PIN_ADDITIONAL_LED),
     m_thread(SDCARD_THREAD_PRIORITY, SDCARD_THREAD_SIZE)
 {
     if (!m_sd.init()) {
         //if this fails all operations will be ignored (in case you wanna use it without sd card)
         printf("SD init failed\n");
+        m_additional_led = 0;
+    } else {
+        m_additional_led = 1;
     }
     m_data = data;
 }
@@ -31,10 +35,10 @@ void SDCardThread::run()
 {
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
-#if SDCARD_THREAD_PRINTF
-        printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f\r\n", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
-                                                                           m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
-                                                                           m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
+#if SDCARD_DO_PRINTF
+        printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f\n", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
+                                                                         m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
+                                                                         m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
 #endif
         char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
         m_sd.write2sd(rover_header);

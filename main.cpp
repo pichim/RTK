@@ -1,3 +1,10 @@
+/**
+ * notes:
+ * - acc calibration should also be done static while system is level (offset x and y)
+ * 
+ * 
+*/
+
 #include <mbed.h>
 
 #include "param.h"
@@ -8,12 +15,13 @@
 DebounceIn user_button(PC_13);
 void user_button_pressed_fcn();
 bool do_close_sd_file = false;
+DigitalOut user_led(LED1);
 
 int main(){
 
     user_button.fall(&user_button_pressed_fcn);
 
-    Data_t data;
+    Data data;
     SDCardThread sdCardThread(data);
     IMUThread imuThread(data);
 
@@ -26,7 +34,8 @@ int main(){
 
             sdCardThread.CloseFile();
         }
-
+        user_led = !user_led;
+        
         thread_sleep_for(500);
     }
 }

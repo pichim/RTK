@@ -6,22 +6,35 @@
 #define SDCARD_THREAD_TS_MS 1000
 #define SDCARD_THREAD_PRIORITY osPriorityNormal
 #define SDCARD_THREAD_SIZE 4096
-#define SDCARD_THREAD_PRINTF true
+#define SDCARD_PIN_ADDITIONAL_LED PB_9
+#define SDCARD_DO_PRINTF false
 
 #define IMU_THREAD_TS_MS 20
 #define IMU_THREAD_PRIORITY osPriorityNormal
 #define IMU_THREAD_SIZE 4096
-#define IMU_SDA PC_9
-#define IMU_SCL PA_8
-#define IMU_THREAD_PRINTF false
+#define IMU_PIN_SDA PC_9
+#define IMU_PIN_SCL PA_8
+#define IMU_DO_PRINTF true
+#define IMU_DO_USE_ACC_CALIBRATION false // in case you lift of not leveled, this has to be false
+#define IMU_DO_USE_MAG_CALIBRATION true
 
-typedef struct Data_s {
+class Data
+{
+public:
+    Data() {
+        initialise();
+    };
+    virtual ~Data() {};
+
     Eigen::Vector3f gyro, acc, mag;
-    Data_s() :
-    gyro(0.0f, 0.0f, 0.0f),
-    acc(0.0f, 0.0f, 0.0f),
-    mag(0.0f, 0.0f, 0.0f) {}
-} Data_t;
+
+private:
+    void initialise() {
+        gyro.setZero();
+        acc.setZero();
+        mag.setZero();
+    };
+};
 
 /*
 namespace Param{

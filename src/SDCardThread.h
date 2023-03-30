@@ -10,14 +10,15 @@
 class SDCardThread
 {
 public:
-    SDCardThread(Data_t& data);
+    SDCardThread(Data& data);
     virtual ~SDCardThread();
 
     void StartThread();
     void CloseFile();
     
 private:
-    Data_t& m_data;
+    Data& m_data;
+    DigitalOut m_additional_led;
     SDCard m_sd;
     ThreadFlag m_threadFlag;
     Thread m_thread;

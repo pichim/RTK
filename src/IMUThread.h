@@ -6,18 +6,20 @@
 #include "param.h"
 #include "ThreadFlag.h"
 #include "LSM9DS1_i2c.h"
+#include "LinearCharacteristics3.h"
 
 class IMUThread
 {
 public:
-    IMUThread(Data_t& data);
+    IMUThread(Data& data);
     virtual ~IMUThread();
 
     void StartThread();
     
 private:
-    Data_t& m_data;
+    Data& m_data;
     LSM9DS1 m_imu;
+    LinearCharacteristics3 m_magCalib;
 
     ThreadFlag m_threadFlag;
     Thread m_thread;
