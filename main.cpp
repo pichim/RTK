@@ -1,14 +1,53 @@
-/*
-main branch for RTK-GPS implenetation for Drone
-
-
+/**
+ * notes:
+ * - acc calibration should also be done static while system is level (offset x and y)
+ * 
+ * 
 */
 
-#include "mbed.h"
-#include "SD_interface.h"
+#include <mbed.h>
 
+#include "Param.h"
+#include "DebounceIn.h"
+#include "SDCardThread.h"
+#include "IMUThread.h"
 
+DebounceIn user_button(PC_13);
+void user_button_pressed_fcn();
+bool do_close_sd_file = false;
+DigitalOut user_led(LED1);
 
+int main(){
+
+    user_button.fall(&user_button_pressed_fcn);
+
+    Data data;
+    SDCardThread sdCardThread(data);
+    IMUThread imuThread(data);
+
+    imuThread.StartThread();
+    sdCardThread.StartThread();
+    
+
+    while(true) {
+
+        if (do_close_sd_file) {
+
+            sdCardThread.CloseFile();
+        }
+        user_led = !user_led;
+        
+        thread_sleep_for(500);
+    }
+}
+
+void user_button_pressed_fcn()
+{
+    if (!do_close_sd_file) do_close_sd_file = !do_close_sd_file;
+}
+
+/*
+set_time(date2sec(2023, 3, 29, 14, 30, 0));  // Set RTC time
 time_t date2sec(uint16_t yyyy_, uint8_t mm_, uint8_t dd_, uint8_t hh_, uint8_t min_, uint8_t ss_){
   
     struct tm t;
@@ -25,21 +64,4 @@ time_t date2sec(uint16_t yyyy_, uint8_t mm_, uint8_t dd_, uint8_t hh_, uint8_t m
 
     return t_of_day;
 }
-
-int main(){
-    //
-    set_time(date2sec(2023, 3, 25, 13, 55, 40));  // Set RTC time
-
-    SDCARD sd;
-    if(!sd.init()){
-        printf("SD init failed\n"); //if this fails all operations will be ignored(in case you wanna use it without sd card)
-    }
-    // define a header to know what values go where
-    char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
-    sd.write2sd(rover_header);
-    sd.close();
-
-    while(1){
-        ThisThread::sleep_for(1s);
-    }
-}
+*/
