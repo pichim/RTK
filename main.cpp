@@ -17,7 +17,7 @@ void user_button_pressed_fcn();
 bool do_close_sd_file = false;
 DigitalOut user_led(LED1);
 
-int main(){
+int main() {
 
     user_button.fall(&user_button_pressed_fcn);
 

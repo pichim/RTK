@@ -28,7 +28,7 @@ void MahonyRP::Update(Eigen::Vector3f& gyro, Eigen::Vector3f& acc)
          -m_quat.y(),  m_quat.x(),  m_quat.w();
 
     // carefull here, Eigen Quaternions have the internal storage order [x y z w] but you inilialise them with quat(w, x, y, z)
-    // so R rather type the following explizitly
+    // so I rather type the following explizitly
     Eigen::Vector4f dquat = m_Ts * 0.5f * Q * ( gyro + m_bias + m_kp * e );
     m_quat.w() += dquat(0);
     m_quat.x() += dquat(1);
@@ -72,17 +72,17 @@ Eigen::Vector3f MahonyRP::quat2rpy(Eigen::Quaternionf& quat)
 {
 	// ||quat|| = 1
 	Eigen::Vector3f rpy;
-	// phi
-	rpy(0) = atan2f(quat.y() * quat.z() + quat.w() * quat.x(), 0.5f - (quat.x() * quat.x() + quat.y() * quat.y()));
-	// theta
-	float sinarg = -2.0f * (quat.x() * quat.z() - quat.w() * quat.y());
+	// roll
+	rpy(0) = atan2f( quat.y() * quat.z() + quat.w() * quat.x(), 0.5f - ( quat.x() * quat.x() + quat.y() * quat.y() ) );
+	// pitch
+	float sinarg = -2.0f * ( quat.x() * quat.z() - quat.w() * quat.y() );
 	if (sinarg > 1.0f)
 		sinarg = 1.0f;
 	if (sinarg < -1.0f)
 		sinarg = -1.0f;
-	rpy(1) = asinf(sinarg);
-	// psi
-	rpy(2) = atan2f(quat.x() * quat.y() + quat.w() * quat.z(), 0.5f - (quat.y() * quat.y() + quat.z() * quat.z()));
+	rpy(1) = asinf( sinarg );
+	// yaw
+	rpy(2) = atan2f( quat.x() * quat.y() + quat.w() * quat.z(), 0.5f - ( quat.y() * quat.y() + quat.z() * quat.z() ) );
 
 	// roll, pitch, yaw
 	return rpy;

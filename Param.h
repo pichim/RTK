@@ -40,27 +40,14 @@ private:
     };
 };
 
-namespace Param{
-    namespace IMU{
-        // kinematic parameters
-        static const float kp = 2.0f;                   // mahonyRP kp
-        static const float ki = kp * (2.0f*M_PI* 0.4f); // mahonyRP ki
-        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9686518f,  0.0000000f,  0.0000000f,
-                                                                     0.0547396f,  0.9901187f,  0.0000000f,
-                                                                     0.0029033f,  0.0346707f,  1.0412294f ).finished();
-        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() << -0.0767850f, -0.2091931f, -0.4915223f ).finished();
+namespace Param {
+    namespace IMU {                             // p = 1;         % pole at p rad/s
+        static const float kp = 2.0f * 1.0f;    // kp = 2 * p;
+        static const float ki = kp * kp / 4.0f; // ki = kp^2 / 4;
+        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9714836f,  0.0000000f,  0.0000000f,
+                                                                     0.0642447f,  0.9902065f,  0.0000000f,
+                                                                    -0.0060685f,  0.0375249f,  1.0383099f ).finished();
+        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() << -0.0942469f, -0.2001867f, -0.4814042f ).finished();
     }
-    /*
-    namespace Config{
-        // default parameters for robots movement
-        const float DISTANCE_THRESHOLD = 0.1f;        // minimum allowed distance to obstacle in [m]
-        const float VELOCITY_THRESHOLD = 0.05;        // velocity threshold before switching off, in [m/s] and [rad/s]
-    }
-    namespace Physics{
-        const float max_voltage = 12.0f;                // define maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
-        const float counts_per_turn = 64.0f * 19.0f;    // define counts per turn at gearbox end: counts/turn * gearratio
-        const float kn = 530.0f / 12.0f;                // define motor constant in rpm per V
-    }
-    */
 }
 #endif /* PARAM_H_ */

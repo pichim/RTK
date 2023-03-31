@@ -34,25 +34,12 @@ void IMUThread::run()
     gyro_offset.setZero();
     acc_offset.setZero();
 
-/*
-#if IMU_DO_USE_MAG_CALIBRATION
-    static Eigen::Matrix3f A_mag;
-    static Eigen::Vector3f b_mag;
-    A_mag <<  0.9686518f,  0.0000000f,  0.0000000f,
-              0.0547396f,  0.9901187f,  0.0000000f,
-              0.0029033f,  0.0346707f,  1.0412294f;
-    b_mag << -0.0767850f, -0.2091931f, -0.4915223f;
-    m_magCalib.SetCalibrationParameter(A_mag, b_mag);   
-#endif
-*/
-
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
 
         m_imu.updateGyro();
         m_imu.updateAcc();
-        m_imu.updateMag();
-        
+        m_imu.updateMag(); 
         Eigen::Vector3f gyro(m_imu.readGyroX(), m_imu.readGyroY(), m_imu.readGyroZ());       
         Eigen::Vector3f acc (m_imu.readAccX() , m_imu.readAccY() , m_imu.readAccZ() );
         Eigen::Vector3f mag (m_imu.readMagX() , m_imu.readMagY() , m_imu.readMagZ() );
@@ -70,33 +57,31 @@ void IMUThread::run()
             }
         }
         
-        if (!imu_is_calibrated) {
-            m_data.gyro = gyro;
-            m_data.acc  = acc;
-        } else {
-            m_data.gyro = gyro - gyro_offset;
-            m_data.acc  = acc;
+        if (imu_is_calibrated) {
+            gyro -= gyro_offset;
 #if IMU_DO_USE_ACC_CALIBRATION
-            m_data.acc -= acc_offset;
+            acc -= acc_offset;
 #endif
+            mag = m_magCalib.ApplyCalibration(mag);
+
+            m_data.gyro = gyro;
+            m_data.acc = acc;
+            m_data.mag = mag;
+
+            m_mahonyRP.Update(m_data.gyro, m_data.acc);
+            m_data.quat = m_mahonyRP.GetOrientationAsQuaternion();
+            m_data.rpy = m_mahonyRP.GetOrientationAsRPYAngles();
         }
-
-        mag = m_magCalib.ApplyCalibration(mag);
-        m_data.mag = mag;
-
-        m_mahonyRP.Update(gyro, acc);
-        m_data.quat = m_mahonyRP.GetOrientationAsQuaternion();
-        m_data.rpy = m_mahonyRP.GetOrientationAsRPYAngles();
 
 #if IMU_DO_PRINTF
         static Timer timer;
         timer.start();
         float time_ms = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count() * 1.0e-3f;
-        printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f,", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
-                                                                             m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
-                                                                             m_data.mag(0) , m_data.mag(1) , m_data.mag(2) , time_ms );
-        printf("%.6f, %.6f, %.6f, %.6f,", m_data.quat.w(), m_data.quat.w(), m_data.quat.w(), m_data.quat.w() );
-        printf("%.6f, %.6f, %.6f\n", m_data.rpy(0) * 180.0f/M_PI, m_data.rpy(1) * 180.0f/M_PI, m_data.rpy(2) * 180.0f/M_PI );
+        printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, ", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
+                                                                               m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
+                                                                               m_data.mag(0) , m_data.mag(1) , m_data.mag(2) , time_ms );
+        printf("%.6f, %.6f, %.6f, %.6f, ", m_data.quat.w(), m_data.quat.x(), m_data.quat.y(), m_data.quat.z() );
+        printf("%.6f, %.6f, %.6f\n", m_data.rpy(0), m_data.rpy(1), m_data.rpy(2) );
 #endif
     }
 }
