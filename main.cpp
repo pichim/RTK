@@ -1,8 +1,8 @@
 /**
  * notes:
  * - acc calibration should also be done static while system is level (offset x and y)
- * 
- * 
+ * - all unnecesarry printf commands need to vanish or are to wrap inside a compiler command for debugging
+ * - 
 */
 
 #include <mbed.h>

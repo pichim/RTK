@@ -7,7 +7,7 @@
 #define SDCARD_THREAD_PRIORITY osPriorityNormal
 #define SDCARD_THREAD_SIZE 4096
 #define SDCARD_PIN_ADDITIONAL_LED PB_9
-#define SDCARD_DO_PRINTF false
+//#define SDCARD_DO_PRINTF false
 
 #define IMU_THREAD_TS_MS 20
 #define IMU_THREAD_PRIORITY osPriorityNormal
@@ -15,7 +15,7 @@
 #define IMU_PIN_SDA PC_9
 #define IMU_PIN_SCL PA_8
 #define IMU_DO_PRINTF true
-#define IMU_DO_USE_ACC_CALIBRATION false // in case you lift of not leveled, this has to be false
+#define IMU_DO_USE_ACC_CALIBRATION false // in case you lift off while not leveled, this has to be false
 #define IMU_DO_USE_MAG_CALIBRATION true
 
 class Data
@@ -27,22 +27,30 @@ public:
     virtual ~Data() {};
 
     Eigen::Vector3f gyro, acc, mag;
+    Eigen::Quaternionf quat;
+    Eigen::Vector3f rpy;
 
 private:
     void initialise() {
         gyro.setZero();
         acc.setZero();
         mag.setZero();
+        quat.setIdentity();
+        rpy.setZero();
     };
 };
 
-/*
 namespace Param{
-    namespace Kinematics{
+    namespace IMU{
         // kinematic parameters
-        const float r_wheel = 0.0766f / 2.0f;   // wheel radius
-        const float l_wheel = 0.176f;           // distance from wheel to wheel
+        static const float kp = 2.0f;                   // mahonyRP kp
+        static const float ki = kp * (2.0f*M_PI* 0.4f); // mahonyRP ki
+        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9686518f,  0.0000000f,  0.0000000f,
+                                                                     0.0547396f,  0.9901187f,  0.0000000f,
+                                                                     0.0029033f,  0.0346707f,  1.0412294f ).finished();
+        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() << -0.0767850f, -0.2091931f, -0.4915223f ).finished();
     }
+    /*
     namespace Config{
         // default parameters for robots movement
         const float DISTANCE_THRESHOLD = 0.1f;        // minimum allowed distance to obstacle in [m]
@@ -53,6 +61,6 @@ namespace Param{
         const float counts_per_turn = 64.0f * 19.0f;    // define counts per turn at gearbox end: counts/turn * gearratio
         const float kn = 530.0f / 12.0f;                // define motor constant in rpm per V
     }
+    */
 }
-*/
 #endif /* PARAM_H_ */

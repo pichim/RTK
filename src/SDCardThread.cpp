@@ -35,11 +35,6 @@ void SDCardThread::run()
 {
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
-#if SDCARD_DO_PRINTF
-        printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f\n", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
-                                                                         m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
-                                                                         m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
-#endif
         char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
         m_sd.write2sd(rover_header);
     }

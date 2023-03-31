@@ -7,6 +7,7 @@
 #include "ThreadFlag.h"
 #include "LSM9DS1_i2c.h"
 #include "LinearCharacteristics3.h"
+#include "MahonyRP.h"
 
 class IMUThread
 {
@@ -20,6 +21,7 @@ private:
     Data& m_data;
     LSM9DS1 m_imu;
     LinearCharacteristics3 m_magCalib;
+    MahonyRP m_mahonyRP;
 
     ThreadFlag m_threadFlag;
     Thread m_thread;
