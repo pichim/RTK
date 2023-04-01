@@ -1,19 +1,20 @@
-#ifndef MAHONY_RP_H_
-#define MAHONY_RP_H_
+#ifndef MAHONY_H_
+#define MAHONY_H_
 
 #include <mbed.h>
 
 #include "param.h"
 
-class MahonyRP
+class Mahony
 {
 public:
-    MahonyRP();
-    MahonyRP(float kp, float ki, float Ts);
-    virtual ~MahonyRP();
+    Mahony();
+    Mahony(float kp, float ki, float Ts);
+    virtual ~Mahony();
 
     void Setup(float& kp, float& ki, float& Ts);
     void Update(Eigen::Vector3f& gyro, Eigen::Vector3f& acc);
+    void Update(Eigen::Vector3f& gyro, Eigen::Vector3f& acc, Eigen::Vector3f& mag);
     Eigen::Quaternionf GetOrientationAsQuaternion();
     Eigen::Vector3f GetOrientationAsRPYAngles();
         
@@ -26,7 +27,8 @@ private:
     Eigen::Vector3f m_rpy;
 
     void initialise();
+    void updateOrientation(Eigen::Vector3f& gyro, Eigen::Vector3f& e);
     Eigen::Vector3f quat2rpy(Eigen::Quaternionf& quat);
 };
 
-#endif /* MAHONY_RP_H_ */
+#endif /* MAHONY_H_ */

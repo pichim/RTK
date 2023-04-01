@@ -5,7 +5,7 @@
 IMUThread::IMUThread(Data& data) :
     m_data(data),
     m_imu(IMU_PIN_SDA, IMU_PIN_SCL),
-    m_mahonyRP(Param::IMU::kp, Param::IMU::ki, IMU_THREAD_TS_MS * 1.0e-3f),
+    m_mahony(Param::IMU::kp, Param::IMU::ki, IMU_THREAD_TS_MS * 1.0e-3f),
     m_thread(IMU_THREAD_PRIORITY, IMU_THREAD_SIZE)
 {
 #if IMU_DO_USE_MAG_CALIBRATION
@@ -68,9 +68,13 @@ void IMUThread::run()
             m_data.acc = acc;
             m_data.mag = mag;
 
-            m_mahonyRP.Update(m_data.gyro, m_data.acc);
-            m_data.quat = m_mahonyRP.GetOrientationAsQuaternion();
-            m_data.rpy = m_mahonyRP.GetOrientationAsRPYAngles();
+#ifdef IMU_THREAD_DO_USE_MAG_FOR_MAHONY_UPDATE
+            m_mahony.Update(m_data.gyro, m_data.acc, m_data.mag);
+#else
+            m_mahony.Update(m_data.gyro, m_data.acc);
+#endif
+            m_data.quat = m_mahony.GetOrientationAsQuaternion();
+            m_data.rpy = m_mahony.GetOrientationAsRPYAngles();
         }
 
 #if IMU_DO_PRINTF

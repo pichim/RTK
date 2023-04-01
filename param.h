@@ -17,6 +17,7 @@
 #define IMU_DO_PRINTF true
 #define IMU_DO_USE_ACC_CALIBRATION false // in case you lift off while not leveled, this has to be false
 #define IMU_DO_USE_MAG_CALIBRATION true
+#define IMU_THREAD_DO_USE_MAG_FOR_MAHONY_UPDATE true
 
 class Data
 {
@@ -41,9 +42,13 @@ private:
 };
 
 namespace Param {
-    namespace IMU {                             // p = 1;         % pole at p rad/s
-        static const float kp = 2.0f * 1.0f;    // kp = 2 * p;
-        static const float ki = kp * kp / 4.0f; // ki = kp^2 / 4;
+    namespace IMU {
+        // % bessel
+        // p = 2;         % pole at p rad/s
+        // kp = 2 * p;
+        // ki = kp^2 / 3;
+        static const float kp = 2.0f * 2.0f;
+        static const float ki = kp * kp / 3.0f;
         static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9714836f,  0.0000000f,  0.0000000f,
                                                                      0.0642447f,  0.9902065f,  0.0000000f,
                                                                     -0.0060685f,  0.0375249f,  1.0383099f ).finished();
