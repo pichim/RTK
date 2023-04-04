@@ -1,10 +1,9 @@
-/**
+/*
  * notes:
  * - acc calibration should also be done static while system is level (offset x and y)
  * 
  * 
 */
-
 #include <mbed.h>
 
 #include "Param.h"
