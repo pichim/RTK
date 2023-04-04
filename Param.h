@@ -3,6 +3,16 @@
 
 #include <eigen/Dense.h>
 
+#define GNSS_THREAD_TS_MS 1000
+#define GNSS_THREAD_PRIORITY osPriorityNormal
+#define GNSS_THREAD_SIZE 4096
+#define GNSS_DO_PRINTF true
+#define GNSS_RX PA_8
+#define GNSS_TX PA_9
+#define GNSS_UART_BAUD 57600 //default for the SIK Telemetry module
+
+
+
 #define SDCARD_THREAD_TS_MS 200
 #define SDCARD_THREAD_PRIORITY osPriorityNormal
 #define SDCARD_THREAD_SIZE 4096
@@ -29,6 +39,7 @@ public:
     virtual ~Data() {};
 
     Eigen::Vector3f gyro, acc, mag;
+
 
 private:
     void initialise() {
