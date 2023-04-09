@@ -14,6 +14,7 @@ public:
     virtual ~GNSSThread();
 
     void StartThread();
+    void run();
     
 private:
     GNSS m_GNSS;
@@ -22,8 +23,6 @@ private:
     ThreadFlag m_threadFlag;
     Thread m_thread;
     Ticker m_ticker;
-    
-    void run();
     void sendThreadFlag();
 };
 

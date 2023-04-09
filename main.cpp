@@ -8,8 +8,7 @@
 
 #include "Param.h"
 #include "DebounceIn.h"
-#include "SDCardThread.h"
-#include "IMUThread.h"
+#include "GNSSThread.h"
 
 DebounceIn user_button(PC_13);
 void user_button_pressed_fcn();
@@ -21,18 +20,14 @@ int main(){
     user_button.fall(&user_button_pressed_fcn);
 
     Data data;
-    SDCardThread sdCardThread(data);
-    IMUThread imuThread(data);
+    GNSSThread GNSSThread(data);
+    GNSSThread.StartThread();
 
-    imuThread.StartThread();
-    sdCardThread.StartThread();
-    
 
     while(true) {
 
         if (do_close_sd_file) {
 
-            sdCardThread.CloseFile();
         }
         user_led = !user_led;
         

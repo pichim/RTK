@@ -3,19 +3,85 @@
 
 
 #include <mbed.h>
+/*
+enum msg_state_t{
+    MSG_IDLE,
+    MSG_HEADER,
+    MSG_CLASS,
+    MSG_ID,
+    MSG_LENGTH,
+    MSG_DATA,
+    MSG_CK_A,
+    MSG_CK_B
+};
+*/
 
 
+class UBXDATA{
+    public:
+        UBXDATA(){};
+
+        uint16_t header;
+        uint8_t class_;
+        uint8_t id;
+        uint16_t length;
+        char data[256];
+        uint8_t ck_a;
+        uint8_t ck_b;
+        bool is_arriving;
+        bool is_valid;
+
+        void checksum(){
+            uint8_t a = 0;
+            uint8_t b = 0;
+            a += class_;
+            b += a;
+
+            a += id;
+            b += a;
+
+            a += (uint8_t)(length >> 8);
+            b += a;
+
+            a += (uint8_t)length;
+            b += a;
+
+            for(int i = 0; i < length; i++){
+                a += data[i];
+                b += a;
+            }
+            /*
+            printf("my ckecksum = 0x%02x , 0x%02x\n",a,b);
+            printf("desired cs  = 0x%02x , 0x%02x\n",ck_a,ck_b);
+
+            */
+            if((ck_a == a) && (ck_b == b)){
+                is_valid = true;
+            }
+
+        }
+
+};
 
 class GNSS {
 
     public:
         GNSS(PinName, PinName);
 
-        uint32_t read();
+        uint32_t decode(char* buf, int l);
+        uint8_t readGNSSdata();
 
 
     private:
+
+        uint8_t m_msg_index;
+        UBXDATA m_msg[10];
+
+
+
         bool init();
+
+        //void read_uart();
 
 
         typedef struct ubxNavPVT_s {
