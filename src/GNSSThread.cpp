@@ -3,9 +3,10 @@
 #include <cstdio>
 
 GNSSThread::GNSSThread(Data& data) :
-    m_GNSS(GNSS_TX, GNSS_RX),
+    m_GNSS(GNSS_TX, GNSS_RX, data),
     m_data(data),
-    m_additional_led(SDCARD_PIN_ADDITIONAL_LED),
+    m_status_led(D14),
+    m_progress_led(D15),
     m_thread(GNSS_THREAD_PRIORITY, GNSS_THREAD_SIZE)
 {
     
@@ -24,7 +25,8 @@ void GNSSThread::StartThread()
 
 void GNSSThread::run()
 {   
-    
+    m_status_led = 0;
+    m_progress_led = 0;
 
 
     while(true) {
@@ -35,16 +37,26 @@ void GNSSThread::run()
         timer.start();
 
         m_GNSS.readGNSSdata();
+        
+        if (m_data.base_svin_valid){
+            m_status_led = 1;
+        } else{
+            m_status_led = 0;
+        }
 
 
-      
-
-
-
+        if(m_data.meanAcc_SVIN > 150000){
+            m_progress_led = 0;
+        } else if (m_data.meanAcc_SVIN > 50000 && m_data.meanAcc_SVIN < 150000){
+            m_progress_led = !m_progress_led;
+        } else if (m_data.meanAcc_SVIN > 10000 && m_data.meanAcc_SVIN < 50000) {
+            m_progress_led = 1;
+        }
 
 
 #if GNSS_DO_PRINTF
         // printf's here
+        printf("meanAcc = %f\n", m_data.meanAcc_SVIN);
 #endif
         
     }

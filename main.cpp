@@ -31,7 +31,10 @@ int main(){
         }
         user_led = !user_led;
         
-        thread_sleep_for(500);
+        thread_sleep_for(1000);
+
+        printf("itow: %i\n", data.itow);
+
     }
 }
 

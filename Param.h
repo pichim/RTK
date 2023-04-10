@@ -40,12 +40,22 @@ public:
 
     Eigen::Vector3f gyro, acc, mag;
 
+    uint32_t itow;
+    bool base_time_mode;
+    bool base_svin_valid;
+    float meanAcc_SVIN; // [m]
+
 
 private:
     void initialise() {
         gyro.setZero();
         acc.setZero();
         mag.setZero();
+
+        base_time_mode = 0;
+        base_svin_valid = 0;
+        meanAcc_SVIN = 0;
+        itow = 0;
     };
 };
 
