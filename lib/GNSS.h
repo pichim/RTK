@@ -63,16 +63,15 @@ class GNSS {
 
         uint8_t m_msg_index;
         UBXDATA m_msg[10];
-        Data m_data;
-
-
+        Data& m_data;
+        BufferedSerial m_uart;
 
         bool init();
         bool checksum(int i);
+        time_t date2sec(uint16_t yyyy_, uint8_t mm_, uint8_t dd_, uint8_t hh_, uint8_t min_, uint8_t ss_);
 
         //void read_uart();
-
-        BufferedSerial m_uart;
+        
 
 
 

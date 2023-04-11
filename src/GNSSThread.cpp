@@ -53,10 +53,12 @@ void GNSSThread::run()
             m_progress_led = 1;
         }
 
+        
+
 
 #if GNSS_DO_PRINTF
         // printf's here
-        //printf("meanAcc = %f\n", m_data.meanAcc_SVIN);
+        printf("meanAcc = %f\n", m_data.meanAcc_SVIN);
         printf("itow = %u\n", m_data.itow);
 #endif
         

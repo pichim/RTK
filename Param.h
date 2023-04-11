@@ -46,6 +46,14 @@ public:
     float meanAcc_SVIN; // [m]
 
 
+    bool gnss_time_valid;
+    uint16_t gnss_year;
+    uint8_t gnss_month;
+    uint8_t gnss_day;
+    uint8_t gnss_hour;
+    uint8_t gnss_minutes;
+    uint8_t gnss_seconds;
+
 private:
     void initialise() {
         gyro.setZero();

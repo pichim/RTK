@@ -1,8 +1,6 @@
 #include "GNSS.h"
 
-#define BUFFER_SIZE 128
-
-
+#define BUFFER_SIZE 512
 
 
 GNSS::GNSS(PinName rx, PinName tx, Data& data) :
@@ -16,7 +14,6 @@ GNSS::GNSS(PinName rx, PinName tx, Data& data) :
 uint8_t GNSS::decode()
 {
     int i = 0;
-    uint32_t temp = 0;
 
     while(m_msg[i].is_valid){
 
@@ -24,23 +21,32 @@ uint8_t GNSS::decode()
 
             case(0x3b):
 
-                //temp = ((uint32_t)m_msg[i].data[4]) | ((uint32_t)m_msg[i].data[5] << 8) | ((uint32_t)m_msg[i].data[6] << 16) | ((uint32_t)m_msg[i].data[7] << 24);
                 m_data.itow = ((uint32_t)m_msg[i].data[4]) | ((uint32_t)m_msg[i].data[5] << 8) | ((uint32_t)m_msg[i].data[6] << 16) | ((uint32_t)m_msg[i].data[7] << 24);       //itow
-                //m_data.base_svin_valid = m_msg[i].data[36];                                                                     //see if base has succesfully completed survey-in
+                m_data.base_svin_valid = m_msg[i].data[36];                                                                     //see if base has succesfully completed survey-in
                 m_data.meanAcc_SVIN = (float)(((uint32_t)m_msg[i].data[28]) | ((uint32_t)m_msg[i].data[29] << 8) | ((uint32_t)m_msg[i].data[30] << 16) | ((uint32_t)m_msg[i].data[31] << 24)) / 10000.0;   // progress
                 
-                
-                for(int ii = 0; ii < m_msg[i].length; ii++){
-                    printf(" %02x",m_msg[i].data[ii]);
+            break;
+
+            case(0x21):
+
+                m_data.gnss_year = ((uint32_t)m_msg[i].data[12]) | ((uint32_t)m_msg[i].data[13] << 8);
+                m_data.gnss_month = ((uint32_t)m_msg[i].data[14]);
+                m_data.gnss_day = ((uint32_t)m_msg[i].data[15]);
+                m_data.gnss_hour = ((uint32_t)m_msg[i].data[16]);
+                m_data.gnss_minutes = ((uint32_t)m_msg[i].data[17]);
+                m_data.gnss_seconds = ((uint32_t)m_msg[i].data[18]);
+                m_data.gnss_time_valid = ((uint32_t)m_msg[i].data[19] >> 2) & 0x01;
+
+
+                if(m_data.gnss_time_valid){
+                    set_time(date2sec(m_data.gnss_year, m_data.gnss_month, m_data.gnss_day, m_data.gnss_hour, m_data.gnss_minutes, m_data.gnss_seconds));  // Set RTC time
                 }
-                //printf("    temp = %u\n", m_data.itow);
-                
 
             break;
             //
             default:
 #if GNSS_DO_PRINTF
-            printf("msg not supported\n");
+            printf("msg not supported: 0x%x\n",m_msg[i].id);
 #endif
         }
         m_msg[i].reset();
@@ -57,10 +63,10 @@ uint8_t GNSS::decode()
 uint8_t GNSS::readGNSSdata()
 {
 
-    static char buffer[512];
+    static char buffer[BUFFER_SIZE];
     static int msg_length = 0;
 
-    msg_length = m_uart.read(buffer, sizeof(buffer));
+    msg_length = m_uart.read(buffer, BUFFER_SIZE);
     if(msg_length <= 0) return 0;
 
 
@@ -182,4 +188,22 @@ bool GNSS::checksum(int i){
     }
 
     return false;
+}
+
+
+time_t GNSS::date2sec(uint16_t yyyy_, uint8_t mm_, uint8_t dd_, uint8_t hh_, uint8_t min_, uint8_t ss_){
+  
+    struct tm t;
+    time_t t_of_day;
+
+    t.tm_year = yyyy_-1900;  // Year - 1900
+    t.tm_mon = mm_-1;           // Month, where 0 = jan
+    t.tm_mday = dd_;          // Day of the month
+    t.tm_hour = hh_;
+    t.tm_min = min_;
+    t.tm_sec = ss_;
+    t.tm_isdst = 0;        // Is DST on? 1 = yes, 0 = no, -1 = unknown
+    t_of_day = mktime(&t);
+
+    return t_of_day;
 }
