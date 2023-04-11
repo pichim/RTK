@@ -33,7 +33,7 @@ int main(){
         
         thread_sleep_for(1000);
 
-        printf("itow: %i\n", data.itow);
+        //printf("itow: %i\n", data.itow);
 
     }
 }

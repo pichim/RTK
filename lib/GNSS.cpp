@@ -16,7 +16,7 @@ GNSS::GNSS(PinName rx, PinName tx, Data& data) :
 uint8_t GNSS::decode()
 {
     int i = 0;
-
+    uint32_t temp = 0;
 
     while(m_msg[i].is_valid){
 
@@ -24,10 +24,18 @@ uint8_t GNSS::decode()
 
             case(0x3b):
 
-                m_data.itow = m_msg[i].data[4] | m_msg[i].data[5] << 8 | m_msg[i].data[6] << 16 | m_msg[i].data[7] << 24;       //itow
-                m_data.base_svin_valid = m_msg[i].data[36];                                                                     //see if base has succesfully completed survey-in
-                m_data.meanAcc_SVIN = (float)(m_msg[i].data[28] | m_msg[i].data[29] << 8 | m_msg[i].data[30] << 16 | m_msg[i].data[31] << 24) / 10000.0;   // progress
+                //temp = ((uint32_t)m_msg[i].data[4]) | ((uint32_t)m_msg[i].data[5] << 8) | ((uint32_t)m_msg[i].data[6] << 16) | ((uint32_t)m_msg[i].data[7] << 24);
+                m_data.itow = ((uint32_t)m_msg[i].data[4]) | ((uint32_t)m_msg[i].data[5] << 8) | ((uint32_t)m_msg[i].data[6] << 16) | ((uint32_t)m_msg[i].data[7] << 24);       //itow
+                //m_data.base_svin_valid = m_msg[i].data[36];                                                                     //see if base has succesfully completed survey-in
+                m_data.meanAcc_SVIN = (float)(((uint32_t)m_msg[i].data[28]) | ((uint32_t)m_msg[i].data[29] << 8) | ((uint32_t)m_msg[i].data[30] << 16) | ((uint32_t)m_msg[i].data[31] << 24)) / 10000.0;   // progress
                 
+                
+                for(int ii = 0; ii < m_msg[i].length; ii++){
+                    printf(" %02x",m_msg[i].data[ii]);
+                }
+                //printf("    temp = %u\n", m_data.itow);
+                
+
             break;
             //
             default:
@@ -77,11 +85,11 @@ uint8_t GNSS::readGNSSdata()
             m_msg[m_msg_index].length = (uint16_t)buffer[offset + 5] << 8 | (uint16_t)buffer[offset + 4];
 
             for(i = 0; i < m_msg[m_msg_index].length; i++){
-                m_msg[m_msg_index].data[i] = buffer[offset + 5 + i];
+                m_msg[m_msg_index].data[i] = buffer[offset + 6 + i];
             }
 
-            m_msg[m_msg_index].ck_a = buffer[offset + 5 + i + 1];
-            m_msg[m_msg_index].ck_b = buffer[offset + 5 + i + 2];
+            m_msg[m_msg_index].ck_a = buffer[offset + 6 + i + 1];
+            m_msg[m_msg_index].ck_b = buffer[offset + 6 + i + 2];
 
             /*
             if(m_msg[m_msg_index].id == 0x3b){
