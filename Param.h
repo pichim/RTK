@@ -3,6 +3,16 @@
 
 #include <eigen/Dense.h>
 
+#define GNSS_THREAD_TS_MS 200
+#define GNSS_THREAD_PRIORITY osPriorityNormal
+#define GNSS_THREAD_SIZE 4096
+#define GNSS_DO_PRINTF true
+#define GNSS_RX PA_10
+#define GNSS_TX PB_6
+#define GNSS_UART_BAUD 57600 //default for the SIK Telemetry module
+
+
+
 #define SDCARD_THREAD_TS_MS 200
 #define SDCARD_THREAD_PRIORITY osPriorityNormal
 #define SDCARD_THREAD_SIZE 4096
@@ -30,11 +40,30 @@ public:
 
     Eigen::Vector3f gyro, acc, mag;
 
+    uint32_t itow;
+    bool base_time_mode;
+    bool base_svin_valid;
+    float meanAcc_SVIN; // [m]
+
+
+    bool gnss_time_valid;
+    uint16_t gnss_year;
+    uint8_t gnss_month;
+    uint8_t gnss_day;
+    uint8_t gnss_hour;
+    uint8_t gnss_minutes;
+    uint8_t gnss_seconds;
+
 private:
     void initialise() {
         gyro.setZero();
         acc.setZero();
         mag.setZero();
+
+        base_time_mode = 0;
+        base_svin_valid = 0;
+        meanAcc_SVIN = 0;
+        itow = 0;
     };
 };
 
