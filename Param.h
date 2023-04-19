@@ -40,12 +40,42 @@ public:
 
     Eigen::Vector3f gyro, acc, mag;
 
-    uint32_t itow;
+    int32_t itow;
+
+    //UBX-NAV-SVIN
     bool base_time_mode;
     bool base_svin_valid;
     float meanAcc_SVIN; // [m]
 
+    //UBX-NAV-STATUS
+    uint8_t gnss_fix; //
+    bool rtk_float; //
+    bool rtk_fix;   //
+    uint32_t ttff;  //
+    uint32_t msss;  //
 
+    //UBX-NAV-RELPOSNED
+    uint16_t refstationid; //
+    Eigen::Vector3f relPosNED, accNED; //
+    uint32_t rtk_flags; //
+
+    //UBX-NAV-HPPOSLLH
+    bool invalidLLH; //
+    Eigen::Vector3f hpLlh; //
+    float hMSL; //
+    float hAcc;  //
+    float vAcc;  //
+
+    //UBX-NAV-PVT
+    uint8_t fix_type; //
+    uint8_t numSV; //
+    Eigen::Vector3f llh, velNED; //
+    float sAcc; //
+    float gSpeed;   //
+    float pDOP; //
+    uint8_t lastCorrectionAge; //
+
+    //UBX-NAV-TIMEUTC
     bool gnss_time_valid;
     uint16_t gnss_year;
     uint8_t gnss_month;
