@@ -89,10 +89,10 @@ bool SDCard::write_f_2_sd(float* data, int l){
 }
 
 
-bool SDCard::write_int_2_sd(int* data, int l) {
+bool SDCard::write_u32_2_sd(uint32_t* data, int l) {
     if(!m_init_success) return 0;
 
-    size_t n_written = fwrite(data, sizeof(int), l, m_fp);
+    size_t n_written = fwrite(data, sizeof(uint32_t), l, m_fp);
 
     if (n_written != l){
         printf("SDCard Write failed\n");
@@ -100,6 +100,32 @@ bool SDCard::write_int_2_sd(int* data, int l) {
 
     return 1;
 }
+
+bool SDCard::write_u8_2_sd(uint8_t* data, int l){
+    if(!m_init_success) return 0;
+
+    size_t n_written = fwrite(data, sizeof(uint8_t), l, m_fp);
+
+    if (n_written != l){
+        printf("SDCard Write failed\n");
+    }
+
+    return 1;
+}
+
+
+bool SDCard::write_bool_2_sd(bool* data, int l){
+    if(!m_init_success) return 0;
+
+    size_t n_written = fwrite(data, sizeof(bool), l, m_fp);
+
+    if (n_written != l){
+        printf("SDCard Write failed\n");
+    }
+
+    return 1;
+}
+
 
 bool SDCard::close(){
     if(!m_init_success) return 0; //must be here else expect to have crashes

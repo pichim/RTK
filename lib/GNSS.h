@@ -67,7 +67,7 @@ class GNSS {
         BufferedSerial m_uart;
 
         bool init();
-        bool checksum(int i);
+        bool checksum(int i); // not working
         time_t date2sec(uint16_t yyyy_, uint8_t mm_, uint8_t dd_, uint8_t hh_, uint8_t min_, uint8_t ss_);
 
         //void read_uart();

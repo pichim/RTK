@@ -37,16 +37,18 @@ void SDCardThread::CloseFile() {
 void SDCardThread::run()
 {
 
-    static float buffer_f[9];
-    static int buffer_i[] = {0,0};
+    static float buffer_f[32];
+    static uint32_t buffer_u32[3+2]; //3 from param.h and 2 from time and index
+    static uint8_t buffer_u8[4];
+    static bool buffer_b[6];
 
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
 
         static Timer timer;
         timer.start();
-        buffer_i[0] = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
-        buffer_i[1]++;
+        buffer_u32[0] = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
+        buffer_u32[1]++;
 
 #if SDCARD_DO_PRINTF
         printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f\n", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
@@ -66,7 +68,7 @@ void SDCardThread::run()
         //char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
         //m_sd.write2sd(buffer_c,data_length);
         m_sd.write_f_2_sd(buffer_f, 9);
-        m_sd.write_int_2_sd(buffer_i, 2);
+        m_sd.write_u32_2_sd(buffer_u32, 2);
 
     }
 }

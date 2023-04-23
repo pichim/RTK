@@ -19,16 +19,16 @@ uint8_t GNSS::decode()
 
         switch(m_msg[i].id){
 
-            case(0x3b):
-
+            case(0x3b): //UBX-NAV-SVIN
+            { //please dont mind these curly braces, removing these leads to errors
                 m_data.itow = ((uint32_t)m_msg[i].data[4]) | ((uint32_t)m_msg[i].data[5] << 8) | ((uint32_t)m_msg[i].data[6] << 16) | ((uint32_t)m_msg[i].data[7] << 24);       //itow
                 m_data.base_svin_valid = m_msg[i].data[36];                                                                     //see if base has succesfully completed survey-in
                 m_data.meanAcc_SVIN = (float)(((uint32_t)m_msg[i].data[28]) | ((uint32_t)m_msg[i].data[29] << 8) | ((uint32_t)m_msg[i].data[30] << 16) | ((uint32_t)m_msg[i].data[31] << 24)) / 10000.0;   // progress
                 
             break;
-
+            }
             case(0x21):
-
+            {
                 m_data.gnss_year = ((uint32_t)m_msg[i].data[12]) | ((uint32_t)m_msg[i].data[13] << 8);
                 m_data.gnss_month = ((uint32_t)m_msg[i].data[14]);
                 m_data.gnss_day = ((uint32_t)m_msg[i].data[15]);
@@ -43,6 +43,202 @@ uint8_t GNSS::decode()
                 }
 
             break;
+            }
+            case(0x03): //UBX-NAV-STATUS
+            {
+                m_data.itow =     (uint32_t)m_msg[i].data[0]
+                                | ((uint32_t)m_msg[i].data[1] << 8)
+                                | ((uint32_t)m_msg[i].data[2] << 16)
+                                | ((uint32_t)m_msg[i].data[3] << 24);
+
+                m_data.gnss_fix = m_msg[i].data[4];
+                m_data.diffCorr_available = m_msg[i].data[6] & 0x01;
+                m_data.rtk_float = m_msg[i].data[7] >> 6 & 0x01;
+                m_data.rtk_fix = m_msg[i].data[7] >> 7 & 0x01;
+                m_data.ttff =     (uint32_t)m_msg[i].data[8]
+                                | ((uint32_t)m_msg[i].data[9] << 8)
+                                | ((uint32_t)m_msg[i].data[10] << 16)
+                                | ((uint32_t)m_msg[i].data[11] << 24);
+
+                m_data.msss =     (uint32_t)m_msg[i].data[12]
+                                | ((uint32_t)m_msg[i].data[13] << 8)
+                                | ((uint32_t)m_msg[i].data[14] << 16)
+                                | ((uint32_t)m_msg[i].data[15] << 24);
+
+            break;
+            }            
+            case(0x14): //UBX-NAV-HPPOSLLH
+            {
+                m_data.invalidLLH = m_msg[i].data[3] & 0x01; //invalid LLH
+                m_data.itow =     (uint32_t)m_msg[i].data[4]
+                                | ((uint32_t)m_msg[i].data[5] << 8)
+                                | ((uint32_t)m_msg[i].data[6] << 16)
+                                | ((uint32_t)m_msg[i].data[ 7] << 24); //itow
+
+                uint32_t temp1 =  (uint32_t)m_msg[i].data[8]
+                                | ((uint32_t)m_msg[i].data[9] << 8)
+                                | ((uint32_t)m_msg[i].data[10] << 16)
+                                | ((uint32_t)m_msg[i].data[11] << 24); //lon
+
+                uint32_t temp2 =  (uint32_t)m_msg[i].data[12]
+                                | ((uint32_t)m_msg[i].data[13] << 8)
+                                | ((uint32_t)m_msg[i].data[14] << 16)
+                                | ((uint32_t)m_msg[i].data[15] << 24); //lat
+
+                float lon = (float)temp1 / 10000000.0f;    // [deg]
+                float lat = (float)temp2 / 10000000.0f;    // [deg]
+
+                uint32_t temp3 =  (uint32_t)m_msg[i].data[16]
+                                | ((uint32_t)m_msg[i].data[17] << 8)
+                                | ((uint32_t)m_msg[i].data[18] << 16)
+                                | ((uint32_t)m_msg[i].data[19] << 24); //height
+
+                float height = (float)temp3 / 1000;     // [m]
+
+                uint32_t temp4 =  (uint32_t)m_msg[i].data[20]
+                                | ((uint32_t)m_msg[i].data[21] << 8)
+                                | ((uint32_t)m_msg[i].data[22] << 16)
+                                | ((uint32_t)m_msg[i].data[23] << 24); //hMSL
+
+                float hMSL = (float)temp4 / 1000;     // [m]
+
+                m_data.hpLlh <<     (lon + ((float)(int8_t)m_msg[i].data[24] / 1000000000.0f)),
+                                    (lat + ((float)(int8_t)m_msg[i].data[25] / 1000000000.0f)),
+                                    (height + ((float)(int8_t)m_msg[i].data[26]) / 10000.0f);
+
+                m_data.hMSL = (hMSL + ((float)(int8_t)m_msg[i].data[27]) / 10000);
+
+                m_data.hAcc = (float)((uint32_t)m_msg[i].data[28]
+                            | ((uint32_t)m_msg[i].data[29] << 8)
+                            | ((uint32_t)m_msg[i].data[30] << 16)
+                            | ((uint32_t)m_msg[i].data[31] << 24)) / 10000.0f; //hAcc
+
+                m_data.vAcc = (float)((uint32_t)m_msg[i].data[32]
+                            | ((uint32_t)m_msg[i].data[33] << 8)
+                            | ((uint32_t)m_msg[i].data[34] << 16)
+                            | ((uint32_t)m_msg[i].data[35] << 24)) / 10000.0f; //vAcc
+
+            break;
+            }
+            case(0x3c): //UBX-NAV-RELPOSNED
+            {
+            
+                m_data.refstationid =   (uint16_t)m_msg[i].data[2]
+                                      | ((uint16_t)m_msg[i].data[3] << 8); //ref ID
+
+                m_data.itow =   (uint32_t)m_msg[i].data[4]
+                              | ((uint32_t)m_msg[i].data[5] << 8)
+                              | ((uint32_t)m_msg[i].data[6] << 16)
+                              | ((uint32_t)m_msg[i].data[7] << 24); //itow
+
+                float tempf[3];
+                tempf[0] =    (float)((uint32_t)m_msg[i].data[8]
+                            | ((uint32_t)m_msg[i].data[9] << 8)
+                            | ((uint32_t)m_msg[i].data[10] << 16)
+                            | ((uint32_t)m_msg[i].data[11] << 24)) / 100.0f; //relpos N
+
+                tempf[1] =    (float)((uint32_t)m_msg[i].data[12]
+                            | ((uint32_t)m_msg[i].data[13] << 8)
+                            | ((uint32_t)m_msg[i].data[14] << 16)
+                            | ((uint32_t)m_msg[i].data[15] << 24)) / 100.0f; //relpos E
+
+                tempf[2] =    (float)((uint32_t)m_msg[i].data[16]
+                            | ((uint32_t)m_msg[i].data[17] << 8)
+                            | ((uint32_t)m_msg[i].data[18] << 16)
+                            | ((uint32_t)m_msg[i].data[19] << 24)) / 100.0f; //relpos D
+
+                m_data.relPosNED << (tempf[0] + (float)(int8_t)m_msg[i].data[32] / 10000.0f),
+                                    (tempf[1] + (float)(int8_t)m_msg[i].data[33] / 10000.0f),
+                                    (tempf[2] + (float)(int8_t)m_msg[i].data[34] / 10000.0f);
+
+                tempf[0] =    (float)((uint32_t)m_msg[i].data[36]
+                            | ((uint32_t)m_msg[i].data[37] << 8)
+                            | ((uint32_t)m_msg[i].data[38] << 16)
+                            | ((uint32_t)m_msg[i].data[39] << 24)) / 10000.0f; //acc N
+
+                tempf[1] =    (float)((uint32_t)m_msg[i].data[40]
+                            | ((uint32_t)m_msg[i].data[41] << 8)
+                            | ((uint32_t)m_msg[i].data[42] << 16)
+                            | ((uint32_t)m_msg[i].data[43] << 24)) / 10000.0f; //acc E
+
+                tempf[2] =    (float)((uint32_t)m_msg[i].data[44]
+                            | ((uint32_t)m_msg[i].data[45] << 8)
+                            | ((uint32_t)m_msg[i].data[46] << 16)
+                            | ((uint32_t)m_msg[i].data[47] << 24)) / 10000.0f; //acc D
+
+                m_data.accNED << tempf[0], tempf[1], tempf[2];
+
+                m_data.rtk_flags = (uint32_t)m_msg[i].data[60]
+                                 | ((uint32_t)m_msg[i].data[61] << 8)
+                                 | ((uint32_t)m_msg[i].data[62] << 16)
+                                 | ((uint32_t)m_msg[i].data[63] << 24);
+
+            break;
+            }
+
+            case(0x07):
+            {
+                m_data.itow =   (uint32_t)m_msg[i].data[0]
+                              | ((uint32_t)m_msg[i].data[1] << 8)
+                              | ((uint32_t)m_msg[i].data[2] << 16)
+                              | ((uint32_t)m_msg[i].data[3] << 24); //itow
+
+                m_data.fix_type = m_msg[i].data[20];
+                m_data.numSV = m_msg[i].data[23];
+
+                float tempf[3];
+                tempf[0] =    (float)((uint32_t)m_msg[i].data[24]
+                            | ((uint32_t)m_msg[i].data[25] << 8)
+                            | ((uint32_t)m_msg[i].data[26] << 16)
+                            | ((uint32_t)m_msg[i].data[27] << 24)) / 10000000.0f; //lon
+
+                tempf[1] =    (float)((uint32_t)m_msg[i].data[28]
+                            | ((uint32_t)m_msg[i].data[29] << 8)
+                            | ((uint32_t)m_msg[i].data[30] << 16)
+                            | ((uint32_t)m_msg[i].data[31] << 24)) / 10000000.0f; // lat
+
+                tempf[2] =    (float)((uint32_t)m_msg[i].data[32]
+                            | ((uint32_t)m_msg[i].data[33] << 8)
+                            | ((uint32_t)m_msg[i].data[34] << 16)
+                            | ((uint32_t)m_msg[i].data[35] << 24)) / 1000.0f; // height
+
+                m_data.llh << tempf[0], tempf[1], tempf[2];
+
+                tempf[0] =    (float)((uint32_t)m_msg[i].data[48]
+                            | ((uint32_t)m_msg[i].data[49] << 8)
+                            | ((uint32_t)m_msg[i].data[50] << 16)
+                            | ((uint32_t)m_msg[i].data[51] << 24)) / 1000.0f; //vel N
+
+                tempf[1] =    (float)((uint32_t)m_msg[i].data[52]
+                            | ((uint32_t)m_msg[i].data[53] << 8)
+                            | ((uint32_t)m_msg[i].data[54] << 16)
+                            | ((uint32_t)m_msg[i].data[55] << 24)) / 1000.0f; // vel E
+
+                tempf[2] =    (float)((uint32_t)m_msg[i].data[56]
+                            | ((uint32_t)m_msg[i].data[57] << 8)
+                            | ((uint32_t)m_msg[i].data[58] << 16)
+                            | ((uint32_t)m_msg[i].data[59] << 24)) / 1000.0f; // vel D
+
+                m_data.velNED << tempf[0], tempf[1], tempf[2];
+
+                m_data.gSpeed =    (float)((uint32_t)m_msg[i].data[60]
+                                 | ((uint32_t)m_msg[i].data[61] << 8)
+                                 | ((uint32_t)m_msg[i].data[62] << 16)
+                                 | ((uint32_t)m_msg[i].data[63] << 24)) / 1000.0f; // ground Speed
+
+                m_data.headMotion = (float)((uint32_t)m_msg[i].data[64]
+                                 | ((uint32_t)m_msg[i].data[65] << 8)
+                                 | ((uint32_t)m_msg[i].data[66] << 16)
+                                 | ((uint32_t)m_msg[i].data[67] << 24)) / 100000.0f; // heading
+                
+                m_data.pDOP = (float)((uint32_t)m_msg[i].data[76]
+                                 | ((uint32_t)m_msg[i].data[77] << 8)) / 100.0f; // Position DOP
+
+
+                m_data.lastCorrectionAge = (m_msg[i].data[78] >> 1) & 0x0F;
+
+            break;
+            }
             //
             default:
 #if GNSS_DO_PRINTF

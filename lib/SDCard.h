@@ -15,7 +15,9 @@ class SDCard{
     bool write_str_2_sd(char* data);
     bool write_ln();
     bool write_f_2_sd(float* data, int l);
-    bool write_int_2_sd(int* data, int l);
+    bool write_u32_2_sd(uint32_t* data, int l);
+    bool write_u8_2_sd(uint8_t* data, int l);
+    bool write_bool_2_sd(bool* data, int l);
     bool close();
 
     private:
