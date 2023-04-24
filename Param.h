@@ -5,11 +5,13 @@
 
 #define GNSS_THREAD_TS_MS 200
 #define GNSS_THREAD_PRIORITY osPriorityNormal
+#define GNSS_RTK_FIX_LED PB_9
+#define GNSS_FIX_LED PB_8
 #define GNSS_THREAD_SIZE 4096
 #define GNSS_DO_PRINTF true
 #define GNSS_RX PA_10
 #define GNSS_TX PB_6
-#define GNSS_UART_BAUD 57600 //default for the SIK Telemetry module
+#define GNSS_UART_BAUD 115200
 
 
 
@@ -26,7 +28,7 @@
 #define IMU_THREAD_SIZE 4096
 #define IMU_PIN_SDA PC_9
 #define IMU_PIN_SCL PA_8
-#define IMU_DO_PRINTF true
+#define IMU_DO_PRINTF false
 #define IMU_DO_USE_ACC_CALIBRATION false // in case you lift of not leveled, this has to be false
 #define IMU_DO_USE_MAG_CALIBRATION true
 
@@ -57,7 +59,7 @@ public:
 
     //UBX-NAV-RELPOSNED
     uint16_t refstationid; 
-    Eigen::Vector3f relPosNED, accNED; 
+    Eigen::Vector3f relPosNED, accNED;
     uint32_t rtk_flags; 
 
     //UBX-NAV-HPPOSLLH

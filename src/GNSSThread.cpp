@@ -5,8 +5,8 @@
 GNSSThread::GNSSThread(Data& data) :
     m_GNSS(GNSS_TX, GNSS_RX, data),
     m_data(data),
-    m_status_led(D14),
-    m_progress_led(D15),
+    m_gnss_fix_led(GNSS_FIX_LED),
+    m_rtk_fix_led(GNSS_RTK_FIX_LED),
     m_thread(GNSS_THREAD_PRIORITY, GNSS_THREAD_SIZE)
 {
     
@@ -25,8 +25,8 @@ void GNSSThread::StartThread()
 
 void GNSSThread::run()
 {   
-    m_status_led = 0;
-    m_progress_led = 0;
+    m_gnss_fix_led = 0;
+    m_rtk_fix_led = 0;
 
 
     while(true) {
@@ -37,29 +37,28 @@ void GNSSThread::run()
         timer.start();
 
         m_GNSS.readGNSSdata();
-        
-        if (m_data.base_svin_valid){
-            m_status_led = 1;
-        } else{
-            m_status_led = 0;
+
+        if(m_data.rtk_fix){
+            m_rtk_fix_led = 1;
+        } else if(m_data.rtk_float){
+            m_rtk_fix_led = !m_rtk_fix_led; //blink at whatever rate the system is running
+        } else {
+            m_rtk_fix_led = 0;
         }
-
-
-        if(m_data.meanAcc_SVIN > 15.0){
-            m_progress_led = 0;
-        } else if (m_data.meanAcc_SVIN > 5.0 && m_data.meanAcc_SVIN < 15.0){
-            m_progress_led = !m_progress_led;
-        } else if (m_data.meanAcc_SVIN > 1.0 && m_data.meanAcc_SVIN < 5.0) {
-            m_progress_led = 1;
-        }
-
         
+        if(m_data.gnss_fix){
+            m_gnss_fix_led = 1;
+        } else {
+            m_gnss_fix_led = 0;
+        }
 
 
 #if GNSS_DO_PRINTF
         // printf's here
-        printf("meanAcc = %f\n", m_data.meanAcc_SVIN);
-        printf("itow = %u\n", m_data.itow);
+        // printf("meanAcc = %f\n", m_data.meanAcc_SVIN);
+        // printf("itow = %u\n", m_data.itow);
+        printf("msss = %u ms\n",m_data.msss);
+
 #endif
         
     }

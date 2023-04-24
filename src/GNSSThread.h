@@ -19,8 +19,8 @@ public:
 private:
     GNSS m_GNSS;
     Data& m_data;
-    DigitalOut m_status_led;
-    DigitalOut m_progress_led;
+    DigitalOut m_gnss_fix_led;
+    DigitalOut m_rtk_fix_led;
     ThreadFlag m_threadFlag;
     Thread m_thread;
     Ticker m_ticker;

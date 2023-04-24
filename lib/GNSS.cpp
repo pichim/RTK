@@ -17,6 +17,11 @@ uint8_t GNSS::decode()
 
     while(m_msg[i].is_valid){
 
+#if GNSS_DO_PRINTF
+        printf("msg id = 0x%02x \n",m_msg[i].id);
+
+#endif
+
         switch(m_msg[i].id){
 
             case(0x3b): //UBX-NAV-SVIN
@@ -24,7 +29,7 @@ uint8_t GNSS::decode()
                 m_data.itow = ((uint32_t)m_msg[i].data[4]) | ((uint32_t)m_msg[i].data[5] << 8) | ((uint32_t)m_msg[i].data[6] << 16) | ((uint32_t)m_msg[i].data[7] << 24);       //itow
                 m_data.base_svin_valid = m_msg[i].data[36];                                                                     //see if base has succesfully completed survey-in
                 m_data.meanAcc_SVIN = (float)(((uint32_t)m_msg[i].data[28]) | ((uint32_t)m_msg[i].data[29] << 8) | ((uint32_t)m_msg[i].data[30] << 16) | ((uint32_t)m_msg[i].data[31] << 24)) / 10000.0;   // progress
-                
+
             break;
             }
             case(0x21):
@@ -176,7 +181,7 @@ uint8_t GNSS::decode()
             break;
             }
 
-            case(0x07):
+            case(0x07): //UBX-NAV-PVT
             {
                 m_data.itow =   (uint32_t)m_msg[i].data[0]
                               | ((uint32_t)m_msg[i].data[1] << 8)
@@ -265,6 +270,8 @@ uint8_t GNSS::readGNSSdata()
     msg_length = m_uart.read(buffer, BUFFER_SIZE);
     if(msg_length <= 0) return 0;
 
+    printf("l = %i\n", msg_length);
+
 
     static uint16_t header_ref = 0xB562; //
     static uint16_t header = 0;
@@ -304,8 +311,8 @@ uint8_t GNSS::readGNSSdata()
             remaining_bytes -= offset;
             
             //printf("\n\nmsg_index = %i, id = 0x%x, l = %i\n",m_msg_index, m_msg[m_msg_index].id, m_msg[m_msg_index].length);
-
             // checksum(m_msg_index); doesnt currently work so its expected to be correct
+            
             m_msg[m_msg_index].is_valid = true;
 
 
@@ -324,7 +331,6 @@ uint8_t GNSS::readGNSSdata()
 
         }else{offset++; remaining_bytes--;}
 
-
     }
     
     /*
@@ -335,6 +341,10 @@ uint8_t GNSS::readGNSSdata()
         printf("\nread %i bytes\n",msg_length);
     }
     */
+#if GNSS_DO_PRINTF
+        printf("number of msg = %u \n",m_msg_index);
+
+#endif
     
     return decode();
 }
@@ -342,7 +352,7 @@ uint8_t GNSS::readGNSSdata()
 
 bool GNSS::init()
 {
-    m_uart.set_baud(38400); //in the future as a parameter
+    m_uart.set_baud(GNSS_UART_BAUD); //in the future as a parameter
     m_uart.set_blocking(false);
     m_uart.set_format(8,BufferedSerial::None,1);
 

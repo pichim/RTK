@@ -4,15 +4,11 @@
 
 SDCardThread::SDCardThread(Data& data) :
     m_data(data),
-    m_additional_led(SDCARD_PIN_ADDITIONAL_LED),
     m_thread(SDCARD_THREAD_PRIORITY, SDCARD_THREAD_SIZE)
 {
     if (!m_sd.init()) {
         //if this fails all operations will be ignored (in case you wanna use it without sd card)
         printf("SD init failed\n");
-        m_additional_led = 0;
-    } else {
-        m_additional_led = 1;
     }
     m_data = data;
     m_buffer = (uint8_t*)malloc(SDCARD_BUFFER_SIZE);

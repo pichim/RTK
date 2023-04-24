@@ -18,7 +18,6 @@ public:
     
 private:
     Data& m_data;
-    DigitalOut m_additional_led;
     SDCard m_sd;
     ThreadFlag m_threadFlag;
     Thread m_thread;
