@@ -270,8 +270,9 @@ uint8_t GNSS::readGNSSdata()
     msg_length = m_uart.read(buffer, BUFFER_SIZE);
     if(msg_length <= 0) return 0;
 
+#if GNSS_DO_PRINTF
     printf("l = %i\n", msg_length);
-
+#endif
 
     static uint16_t header_ref = 0xB562; //
     static uint16_t header = 0;
@@ -308,13 +309,11 @@ uint8_t GNSS::readGNSSdata()
             m_msg[m_msg_index].is_arriving = false;
 
             offset = offset + 5 + i + 3;
-            remaining_bytes -= offset;
+            remaining_bytes -= (8 - m_msg[m_msg_index].length);
             
             //printf("\n\nmsg_index = %i, id = 0x%x, l = %i\n",m_msg_index, m_msg[m_msg_index].id, m_msg[m_msg_index].length);
-            // checksum(m_msg_index); doesnt currently work so its expected to be correct
-            
+            //checksum(m_msg_index); //doesnt currently work so its expected to be correct
             m_msg[m_msg_index].is_valid = true;
-
 
             m_msg_index++;
             if(m_msg_index >= 10){ //reached max messages
@@ -324,6 +323,11 @@ uint8_t GNSS::readGNSSdata()
             
 
             if(remaining_bytes < 0){ // some bytes are missing
+
+#if GNSS_DO_PRINTF
+                //printf("Something wrong with: %i, remaining bytes = %i\n", m_msg_index, remaining_bytes);
+#endif
+
                 m_msg[m_msg_index].is_valid = false;
                 remaining_bytes = 0; // force loop to end
                 break;
@@ -342,7 +346,7 @@ uint8_t GNSS::readGNSSdata()
     }
     */
 #if GNSS_DO_PRINTF
-        printf("number of msg = %u \n",m_msg_index);
+        //printf("number of msg = %u \n",m_msg_index);
 
 #endif
     

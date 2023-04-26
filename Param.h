@@ -51,33 +51,33 @@ public:
 
     //UBX-NAV-STATUS
     uint8_t gnss_fix; 
-    bool diffCorr_available;
+    bool diffCorr_available;        //true if RTCM data is received
     bool rtk_float; 
     bool rtk_fix;   
-    uint32_t ttff;  
-    uint32_t msss;  
+    uint32_t ttff;                  //time to first fix
+    uint32_t msss;                  //milliseconds since startup
 
     //UBX-NAV-RELPOSNED
-    uint16_t refstationid; 
-    Eigen::Vector3f relPosNED, accNED;
-    uint32_t rtk_flags; 
+    uint16_t refstationid;          // ID of the basesation its receiving correction data from
+    Eigen::Vector3f relPosNED, accNED; //relative position to BASE in NED frame and thier estimated accuracy
+    uint32_t rtk_flags;             // various status flags for RTK related systems
 
     //UBX-NAV-HPPOSLLH
-    bool invalidLLH; 
-    Eigen::Vector3f hpLlh; 
-    float hMSL; 
-    float hAcc;  
-    float vAcc;  
+    bool invalidLLH;                // if GNSS has no fix this is 1
+    Eigen::Vector3f hpLlh;          // High precision position in Global frame
+    float hMSL;                     // Height above mean sea level
+    float hAcc;                     // estimated horizontal accuracy
+    float vAcc;                     // estimated vertical accuracy
 
     //UBX-NAV-PVT
-    uint8_t fix_type; 
-    uint8_t numSV; 
-    Eigen::Vector3f llh, velNED; 
-    float sAcc; 
-    float gSpeed; 
-    float headMotion; 
-    float pDOP; 
-    uint8_t lastCorrectionAge; 
+    uint8_t fix_type;               // see interface description for details
+    uint8_t numSV;                  // number of satellites used for position solution
+    Eigen::Vector3f llh, velNED;    // position and in Global frame and volecites in NED frame
+    float sAcc;                     // estimated speed accuracies
+    float gSpeed;                   // ground speed
+    float headMotion;               // angle of motion relative to north
+    float pDOP;                     // position DOP
+    uint8_t lastCorrectionAge;      // time since last correction data hase be received (for details see interface description)
 
     //UBX-NAV-TIMEUTC
     bool gnss_time_valid;
