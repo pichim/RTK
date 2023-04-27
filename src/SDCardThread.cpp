@@ -11,7 +11,7 @@ SDCardThread::SDCardThread(Data& data) :
         printf("SD init failed\n");
     }
     m_data = data;
-    m_buffer = (uint8_t*)malloc(SDCARD_BUFFER_SIZE);
+    //m_buffer = (uint8_t*)malloc(SDCARD_BUFFER_SIZE);
 }
 
 SDCardThread::~SDCardThread()
@@ -27,7 +27,7 @@ void SDCardThread::StartThread()
 
 void SDCardThread::CloseFile() {
     m_sd.close();
-    free(m_buffer);
+    //free(m_buffer);
 }
 
 void SDCardThread::run()

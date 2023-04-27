@@ -22,7 +22,7 @@ private:
     ThreadFlag m_threadFlag;
     Thread m_thread;
     Ticker m_ticker;
-    uint8_t* m_buffer;
+    //uint8_t* m_buffer;
     
     void run();
     void sendThreadFlag();
