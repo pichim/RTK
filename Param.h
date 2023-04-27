@@ -58,7 +58,7 @@ public:
     float posCovEE;
     float posCovED;
     float posCovDD;
-    float velCovNN;
+    float velCovNN; //rewrite in matrix form but for now this should suffice
     float velCovNE;
     float velCovND;
     float velCovEE;

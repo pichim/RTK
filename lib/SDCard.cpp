@@ -7,6 +7,9 @@ SDCard::SDCard() : m_fs("sd"), m_sd(PC_12, PC_11, PC_10, PD_2){
 
 
 bool SDCard::init() {
+
+    
+
     if (0 != m_sd.init()) {
         //printf("Init failed \n");
         return 0;
@@ -113,7 +116,7 @@ bool SDCard::write_u8_2_sd(uint8_t* data, int l){
     return 1;
 }
 
-
+//TODO: compress individual bits into one byte
 bool SDCard::write_bool_2_sd(bool* data, int l){
     if(!m_init_success) return 0;
 
