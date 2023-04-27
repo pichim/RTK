@@ -49,6 +49,32 @@ public:
     bool base_svin_valid;
     float meanAcc_SVIN; // [m]
 
+    //UBX-NAV-COV
+    bool posCOVvalid;
+    bool velCOVvalid;
+    float posCovNN; //rewrite in matrix form but for now this should suffice
+    float posCovNE;
+    float posCovND;
+    float posCovEE;
+    float posCovED;
+    float posCovDD;
+    float velCovNN;
+    float velCovNE;
+    float velCovND;
+    float velCovEE;
+    float velCovED;
+    float velCovDD;
+
+    //UBX-NAV-DOP
+    float gDOP;
+    float pDOP;
+    float tDOP;
+    float vDOP;
+    float hDOP;
+    float nDOP;
+    float eDOP;
+
+
     //UBX-NAV-STATUS
     uint8_t gnss_fix; 
     bool diffCorr_available;        //true if RTCM data is received
@@ -76,7 +102,6 @@ public:
     float sAcc;                     // estimated speed accuracies
     float gSpeed;                   // ground speed
     float headMotion;               // angle of motion relative to north
-    float pDOP;                     // position DOP
     uint8_t lastCorrectionAge;      // time since last correction data hase be received (for details see interface description)
 
     //UBX-NAV-TIMEUTC
