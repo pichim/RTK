@@ -33,7 +33,6 @@ void GNSSThread::run()
         ThisThread::flags_wait_any(m_threadFlag);
 
         static Timer timer;
-        static uint32_t msg_length;
         timer.start();
 
         m_GNSS.readGNSSdata();

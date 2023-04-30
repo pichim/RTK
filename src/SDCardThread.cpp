@@ -47,14 +47,17 @@ void SDCardThread::run()
 
         static Timer timer;
         timer.start();
+        
         buffer_u32[i_u32++] = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
         buffer_u32[i_u32++]++;
+        
 
 #if SDCARD_DO_PRINTF
         printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f\n", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
                                                                          m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
                                                                          m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
 #endif
+        
         buffer_f[i_f++] = m_data.gyro(0);
         buffer_f[i_f++] = m_data.gyro(1);
         buffer_f[i_f++] = m_data.gyro(2);
@@ -64,7 +67,7 @@ void SDCardThread::run()
         buffer_f[i_f++] = m_data.mag(0);
         buffer_f[i_f++] = m_data.mag(1);
         buffer_f[i_f++] = m_data.mag(2);
-
+        
         buffer_u32[i_u32++] = m_data.itow;
 
         //UBX-NAV-SVIN (BASE)
@@ -147,13 +150,18 @@ void SDCardThread::run()
 
         //char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
         //m_sd.write2sd(buffer_c,data_length);
-        printf("indexed: f = %i, u32 = %i, u8 = %i, b = %i, Total Bytes = %i\n", i_f, i_u32, i_u8, i_b, (i_f*4+i_u32*4+i_u8+i_b));
-
+        //printf("indexed: f = %i, u32 = %i, u8 = %i, b = %i, Total Bytes = %i\n", i_f, i_u32, i_u8, i_b, (i_f*4+i_u32*4+i_u8+i_b));
+        
         m_sd.write_f_2_sd(buffer_f, i_f);
         m_sd.write_u32_2_sd(buffer_u32, i_u32);
         m_sd.write_u8_2_sd(buffer_u8, i_u8);
         m_sd.write_bool_2_sd(buffer_b, i_b);
 
+        i_f = 0;
+        i_u32 = 0;
+        i_u8 = 0;
+        i_b = 0;
+        
     }
 }
 

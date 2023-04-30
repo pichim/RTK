@@ -18,7 +18,7 @@ uint8_t GNSS::decode()
     while(m_msg[i].is_valid){
 
 #if GNSS_DO_PRINTF
-        printf("msg id = 0x%02x \n",m_msg[i].id);
+        //printf("msg id = 0x%02x \n",m_msg[i].id);
 
 #endif
 
@@ -449,7 +449,7 @@ uint8_t GNSS::readGNSSdata()
     }
     */
 #if GNSS_DO_PRINTF
-        //printf("number of msg = %u \n",m_msg_index);
+        printf("number of msg = %u \n",m_msg_index);
 
 #endif
     
