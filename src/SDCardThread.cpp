@@ -34,16 +34,17 @@ void SDCardThread::run()
 {
 
     static float buffer_f[9+1+12+7+3+3+5*3]; //=50 / 200 bytes
-    int i_f = 0;
     static uint32_t buffer_u32[4+2]; //3 from param.h and 2 from time and index =6 / 24 bytes
-    int i_u32 = 0;
     static uint8_t buffer_u8[4]; //4 bytes
-    int i_u8 = 0;
     static bool buffer_b[8]; //8 bytes
-    int i_b = 0;
 
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
+        
+        int i_f = 0;
+        int i_u32 = 0;
+        int i_u8 = 0;
+        int i_b = 0;
 
         static Timer timer;
         timer.start();
@@ -147,7 +148,7 @@ void SDCardThread::run()
 
         //char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
         //m_sd.write2sd(buffer_c,data_length);
-        printf("indexed: f = %i, u32 = %i, u8 = %i, b = %i, Total Bytes = %i\n", i_f, i_u32, i_u8, i_b, (i_f*4+i_u32*4+i_u8+i_b));
+        //printf("indexed: f = %i, u32 = %i, u8 = %i, b = %i, Total Bytes = %i\n", i_f, i_u32, i_u8, i_b, (i_f*4+i_u32*4+i_u8+i_b));
 
         m_sd.write_f_2_sd(buffer_f, i_f);
         m_sd.write_u32_2_sd(buffer_u32, i_u32);
