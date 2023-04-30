@@ -22,6 +22,7 @@ int main(){
     user_button.fall(&user_button_pressed_fcn);
 
     Data data;
+    printf("program Start\n");
 
     
 
@@ -31,7 +32,8 @@ int main(){
     
     GNSSThread.StartThread();
     imuThread.StartThread();
-    sdCardThread.StartThread();
+    //thread_sleep_for(20);
+    //sdCardThread.StartThread();
     
     
 
@@ -39,7 +41,7 @@ int main(){
 
         if (do_close_sd_file) {
 
-            sdCardThread.CloseFile();
+            //sdCardThread.CloseFile();
         }
         user_led = !user_led;
         

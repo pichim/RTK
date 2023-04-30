@@ -7,23 +7,22 @@ SDCard::SDCard() : m_fs("sd"), m_sd(PC_12, PC_11, PC_10, PD_2){
 
 
 bool SDCard::init() {
-
-    
-
     if (0 != m_sd.init()) {
         //printf("Init failed \n");
         return 0;
     }
-    if (0 != m_sd.frequency(12000000)) {
+    
+    if (0 != m_sd.frequency(1000000)) {
         //printf("Error setting frequency \n");
     }
-
+    
     fflush(stdout);
 
     if(m_fs.mount(&m_sd) != 0){
         //printf("mount failed\n");
         return 0;
     }
+    
     fflush(stdout);
     mkdir("/sd/data", 0777);
     
