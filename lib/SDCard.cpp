@@ -131,11 +131,12 @@ bool SDCard::write_bool_2_sd(bool* data, int l){
 
 bool SDCard::close(){
     if(!m_init_success) return 0; //must be here else expect to have crashes
-
+    m_init_success = 0;
+    
     fclose(m_fp);
     if(0 != m_sd.deinit()){
         return 0;
     }
-    m_init_success = 0;
+    
     return 1;
 }

@@ -3,7 +3,7 @@
 
 #include <eigen/Dense.h>
 
-#define GNSS_THREAD_TS_MS 200
+#define GNSS_THREAD_TS_MS 100
 #define GNSS_THREAD_PRIORITY osPriorityNormal
 #define GNSS_RTK_FIX_LED PB_9
 #define GNSS_FIX_LED PB_8
@@ -15,7 +15,7 @@
 
 
 
-#define SDCARD_THREAD_TS_MS 200
+#define SDCARD_THREAD_TS_MS 20
 #define SDCARD_THREAD_PRIORITY osPriorityNormal
 #define SDCARD_THREAD_SIZE 4096
 #define SDCARD_PIN_ADDITIONAL_LED PB_9
@@ -23,7 +23,7 @@
 #define SDCARD_BUFFER_SIZE 512
 
 
-#define IMU_THREAD_TS_MS 100
+#define IMU_THREAD_TS_MS 20
 #define IMU_THREAD_PRIORITY osPriorityNormal
 #define IMU_THREAD_SIZE 4096
 #define IMU_PIN_SDA PC_9
