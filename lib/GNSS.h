@@ -61,10 +61,12 @@ class GNSS {
 
     private:
 
+        
         uint8_t m_msg_index;
         UBXDATA m_msg[GNSS_MAX_UBX_MSG];
         Data& m_data;
         BufferedSerial m_uart;
+
 
         bool init();
         bool checksum(int i); // not working

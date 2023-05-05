@@ -34,7 +34,6 @@ void GNSSThread::run()
 
         static Timer timer;
         timer.start();
-
         m_GNSS.readGNSSdata();
 
         if(m_data.rtk_fix){
