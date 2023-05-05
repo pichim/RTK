@@ -25,20 +25,28 @@ int main(){
     printf("program Start\n");
 
     
-
-    SDCardThread sdCardThread(data);
     IMUThread imuThread(data);
     GNSSThread GNSSThread(data);
+    SDCardThread sdCardThread(data);
     
     GNSSThread.StartThread();
     imuThread.StartThread();
-    thread_sleep_for(20);
-    sdCardThread.StartThread();
+    
+
+    //ideally wait till gnss time is valid
     
     
 
     while(true) {
 
+        
+
+
+        if(data.gnss_time_valid && data.gnss_fix){
+            
+            sdCardThread.StartThread();
+        }
+        
         if (do_close_sd_file) {
 
             sdCardThread.CloseFile();

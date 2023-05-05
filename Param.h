@@ -3,7 +3,7 @@
 
 #include <eigen/Dense.h>
 
-#define GNSS_THREAD_TS_MS 500
+#define GNSS_THREAD_TS_MS 100
 #define GNSS_THREAD_PRIORITY osPriorityNormal
 #define GNSS_RTK_FIX_LED PB_9
 #define GNSS_FIX_LED PB_8

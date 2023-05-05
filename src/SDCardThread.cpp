@@ -6,10 +6,7 @@ SDCardThread::SDCardThread(Data& data) :
     m_data(data),
     m_thread(SDCARD_THREAD_PRIORITY, SDCARD_THREAD_SIZE)
 {
-    if (!m_sd.init()) {
-        //if this fails all operations will be ignored (in case you wanna use it without sd card)
-        printf("SD init failed\n");
-    }
+    m_sdThread_running = false;
     m_data = data;
     //m_buffer = (uint8_t*)malloc(SDCARD_BUFFER_SIZE);
 }
@@ -21,8 +18,15 @@ SDCardThread::~SDCardThread()
 
 void SDCardThread::StartThread()
 {
+    if(m_sdThread_running) return;
+    if(!m_sd.init()) {
+            //if this fails all operations will be ignored (in case you wanna use it without sd card)
+            printf("SD init failed\n");
+    }
     m_thread.start(callback(this, &SDCardThread::run));
     m_ticker.attach(callback(this, &SDCardThread::sendThreadFlag), std::chrono::milliseconds{ static_cast<long int>( SDCARD_THREAD_TS_MS ) });
+
+    m_sdThread_running = true;
 }
 
 void SDCardThread::CloseFile() {

@@ -24,6 +24,7 @@ private:
     Ticker m_ticker;
     //uint8_t* m_buffer;
     
+    bool m_sdThread_running;
     void run();
     void sendThreadFlag();
 };

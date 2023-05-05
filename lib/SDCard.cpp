@@ -34,7 +34,8 @@ bool SDCard::init() {
         m_fp = fopen(m_path, "r");
         if(m_fp == NULL){
             m_fp = fopen(m_path, "w");
-            fprintf(m_fp,"sep=;\nRTK_GPS_DATA;%s\n",m_path);
+            //header for .csv files
+            //fprintf(m_fp,"sep=;\nRTK_GPS_DATA;%s\n",m_path);
 
             printf("working in file: %s\n",m_path);
             break;

@@ -360,8 +360,7 @@ bool GNSS::decode(int i)
 
 uint8_t GNSS::readGNSSdata()
 {
-
-    static char buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE];
     static int msg_length = 0;
 
     msg_length = m_uart.read(buffer, BUFFER_SIZE);
@@ -399,34 +398,28 @@ uint8_t GNSS::readGNSSdata()
             m_msg[m_msg_index].ck_b = buffer[offset + 6 + i + 1];
 
             
-            /*
-            if(m_msg[m_msg_index].id == 0x01){
-                checksum(m_msg_index);
-            }
-            */
-            printf("checking msg: 0x%02x, l = %i\t", m_msg[m_msg_index].id,m_msg[m_msg_index].length);
+            //printf("checking msg: 0x%02x, l = %i\t", m_msg[m_msg_index].id,m_msg[m_msg_index].length);
             m_msg[m_msg_index].is_valid = checksum(m_msg_index);
             m_msg[m_msg_index].is_arriving = false;
 
-            if(m_msg[m_msg_index].id == 0x04){
-                for(int ii = offset + 5 + i + 3 - 10; ii < (offset + 5 + i + 3 + 24); ii++){
-                    printf("%02x ", buffer[ii]);
-                }
-                printf("\n");
-            }
-            
-
-            offset = offset + 5 + i + 3;
-            remaining_bytes -= (8 - m_msg[m_msg_index].length);
             /*
-            if(remaining_bytes < 0){
-                //transaction incomplete
-                break;
+            for(int ii = offset; ii < (offset + 6 + i + 2); ii++){
+                printf("%02x ", buffer[ii]);
             }
+            printf("\n");
             */
             
-            //printf("\n\nmsg_index = %i, id = 0x%x, l = %i\n",m_msg_index, m_msg[m_msg_index].id, m_msg[m_msg_index].length);
-            //checksum(m_msg_index); //doesnt currently work so its expected to be correct
+
+            offset = offset + 6 + i + 2;
+            remaining_bytes -= (8 + m_msg[m_msg_index].length);
+
+            //printf("remaining_bytes = %i, offset = %i\n",remaining_bytes, offset);
+            
+            if(remaining_bytes < 0){
+                printf("transaction incomplete at msg: 0x%02x\n",m_msg[m_msg_index].id);
+                break;
+            }
+            
             
             m_msg_index++;
             if(m_msg_index >= GNSS_MAX_UBX_MSG){ //reached max messages
@@ -437,7 +430,6 @@ uint8_t GNSS::readGNSSdata()
         }else{offset++; remaining_bytes--;}
 
     }
-    printf("remaining_bytes = %i\n",remaining_bytes);
     
     /*
     if(msg_length >= 0){
@@ -496,10 +488,10 @@ bool GNSS::checksum(int msg_i){
     printf("desired cs  = 0x%02x , 0x%02x\n",m_msg[msg_i].ck_a,m_msg[msg_i].ck_b);
     */
     if((m_msg[msg_i].ck_a == a) && (m_msg[msg_i].ck_b == b)){
-        printf("CK success\n");
+        //printf("CK success\n");
         return true;
     }else{
-        printf("CK failed, 0x %02x %02x  /  0x %02x %02x\n",a,b,m_msg[msg_i].ck_a,m_msg[msg_i].ck_b);
+        //printf("CK failed, 0x %02x %02x  /  0x %02x %02x\n",a,b,m_msg[msg_i].ck_a,m_msg[msg_i].ck_b);
         return false;
     }
 
