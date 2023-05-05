@@ -55,14 +55,14 @@ class GNSS {
     public:
         GNSS(PinName, PinName, Data& data);
 
-        uint8_t decode();
+        bool decode(int i);
         uint8_t readGNSSdata();
 
 
     private:
 
         uint8_t m_msg_index;
-        UBXDATA m_msg[10];
+        UBXDATA m_msg[GNSS_MAX_UBX_MSG];
         Data& m_data;
         BufferedSerial m_uart;
 
