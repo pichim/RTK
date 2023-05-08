@@ -3,7 +3,7 @@
 
 #include <eigen/Dense.h>
 
-#define GNSS_THREAD_TS_MS 20
+#define GNSS_THREAD_TS_MS 100
 #define GNSS_THREAD_PRIORITY osPriorityNormal
 #define GNSS_RTK_FIX_LED PB_9
 #define GNSS_FIX_LED PB_8
@@ -93,6 +93,8 @@ public:
     //UBX-NAV-HPPOSLLH
     bool invalidLLH;                // if GNSS has no fix this is 1
     Eigen::Vector3f hpLlh;          // High precision position in Global frame
+    double longitude_hp;            // High precision position
+    double latitude_hp;             // High precision position
     float hMSL;                     // Height above mean sea level
     float hAcc;                     // estimated horizontal accuracy
     float vAcc;                     // estimated vertical accuracy
