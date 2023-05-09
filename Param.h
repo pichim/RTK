@@ -11,7 +11,7 @@
 #define GNSS_DO_PRINTF true
 #define GNSS_RX PA_10
 #define GNSS_TX PB_6
-#define GNSS_UART_BAUD 115200
+#define GNSS_UART_BAUD 921600
 #define GNSS_MAX_UBX_MSG 10
 #define GNSS_UART_MAX_CARRY_BYTES 128
 
@@ -43,6 +43,8 @@ public:
     virtual ~Data() {};
 
     Eigen::Vector3f gyro, acc, mag;
+    Eigen::Quaternionf quat;
+    Eigen::Vector3f rpy;
 
     uint32_t itow;
 
@@ -122,6 +124,8 @@ private:
         gyro.setZero();
         acc.setZero();
         mag.setZero();
+        quat.setIdentity();
+        rpy.setZero();
 
         base_time_mode = 0;
         base_svin_valid = 0;
@@ -150,23 +154,18 @@ private:
     };
 };
 
-/*
-namespace Param{
-    namespace Kinematics{
-        // kinematic parameters
-        const float r_wheel = 0.0766f / 2.0f;   // wheel radius
-        const float l_wheel = 0.176f;           // distance from wheel to wheel
-    }
-    namespace Config{
-        // default parameters for robots movement
-        const float DISTANCE_THRESHOLD = 0.1f;        // minimum allowed distance to obstacle in [m]
-        const float VELOCITY_THRESHOLD = 0.05;        // velocity threshold before switching off, in [m/s] and [rad/s]
-    }
-    namespace Physics{
-        const float max_voltage = 12.0f;                // define maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
-        const float counts_per_turn = 64.0f * 19.0f;    // define counts per turn at gearbox end: counts/turn * gearratio
-        const float kn = 530.0f / 12.0f;                // define motor constant in rpm per V
+namespace Param {
+    namespace IMU {
+        // % bessel
+        // p = 2;         % pole at p rad/s
+        // kp = 2 * p;
+        // ki = kp^2 / 3;
+        static const float kp = 2.0f * 2.0f;
+        static const float ki = kp * kp / 3.0f;
+        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9714836f,  0.0000000f,  0.0000000f,
+                                                                     0.0642447f,  0.9902065f,  0.0000000f,
+                                                                    -0.0060685f,  0.0375249f,  1.0383099f ).finished();
+        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() << -0.0942469f, -0.2001867f, -0.4814042f ).finished();
     }
 }
-*/
 #endif /* PARAM_H_ */

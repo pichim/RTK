@@ -14,16 +14,15 @@ void LinearCharacteristics3::SetCalibrationParameter(Eigen::Matrix3f A, Eigen::V
     m_b = b;
 }
 
-void LinearCharacteristics3::SetLimits(float lowerLimit, float upperLimit)
+void LinearCharacteristics3::SetLimits(float& lowerLimit, float& upperLimit)
 {
     m_lowerLimit = lowerLimit;
     m_upperLimit = upperLimit;
 }
 
-Eigen::Vector3f LinearCharacteristics3::ApplyCalibration(Eigen::Vector3f x)
+Eigen::Vector3f LinearCharacteristics3::ApplyCalibration(Eigen::Vector3f& x)
 {
-    Eigen::Vector3f y;
-    y = m_A * ( x - m_b );
+    Eigen::Vector3f y = m_A * ( x - m_b );
     for(uint8_t i = 0; i < 3; i++) {
         if(y(i) < m_lowerLimit) y(i) = m_lowerLimit;
         if(y(i) > m_upperLimit) y(i) = m_upperLimit;

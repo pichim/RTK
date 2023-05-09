@@ -10,8 +10,8 @@ public:
     virtual ~LinearCharacteristics3();
 
     void  SetCalibrationParameter(Eigen::Matrix3f A, Eigen::Vector3f b);
-    void  SetLimits(float lowerLimit, float upperLimit);
-    Eigen::Vector3f ApplyCalibration(Eigen::Vector3f x);
+    void  SetLimits(float& lowerLimit, float& upperLimit);
+    Eigen::Vector3f ApplyCalibration(Eigen::Vector3f& x);
 
 private:
     Eigen::Matrix3f m_A;

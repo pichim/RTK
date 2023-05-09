@@ -33,10 +33,6 @@ int main(){
     imuThread.StartThread();
     
 
-    //ideally wait till gnss time is valid
-    
-    
-
     while(true) {
 
         
