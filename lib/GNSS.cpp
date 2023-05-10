@@ -475,7 +475,7 @@ uint8_t GNSS::readGNSSdata()
 
 #if GNSS_DO_PRINTF
     //printf("number of msg = %u \n",m_msg_index+1);
-    printf("sum = %i\n",sum); 
+    printf("sum = %i\n",sum);
     /*
     if(msg_length >= 0){
         for(int i = 0; i < msg_length; i++){

@@ -21,7 +21,7 @@ private:
     Data& m_data;
     LSM9DS1 m_imu;
     LinearCharacteristics3 m_magCalib;
-    Mahony m_mahony;
+    //Mahony m_mahony;
 
     ThreadFlag m_threadFlag;
     Thread m_thread;
