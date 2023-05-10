@@ -25,22 +25,23 @@ int main(){
     printf("program Start\n");
 
     
-    IMUThread imuThread(data);
-    GNSSThread GNSSThread(data);
-    SDCardThread sdCardThread(data);
     
+    IMUThread imuThread(data);
+    ThisThread::sleep_for(1s);
+    SDCardThread sdCardThread(data);
+    GNSSThread GNSSThread(data);
+
     GNSSThread.StartThread();
     imuThread.StartThread();
-    
+    sdCardThread.StartThread();
+
+    ThisThread::sleep_for(1s);
+    sdCardThread.OpenFile();
 
     while(true) {
 
-        
-
-
-        if(data.gnss_time_valid && data.gnss_fix){
-            
-            sdCardThread.StartThread();
+        if(data.gnss_time_valid && data.gnss_fix) {
+            //
         }
         
         if (do_close_sd_file) {
@@ -48,6 +49,12 @@ int main(){
             sdCardThread.CloseFile();
         }
         user_led = !user_led;
+        
+        //printf("hpposllh = %3.9f, %3.9f, %4.4f\n",data.longitude_hp,data.latitude_hp,data.hpLlh(2));
+        //printf("relposned = %4.4f, %4.4f, %4.4f\n", data.relPosNED(0), data.relPosNED(1), data.relPosNED(2));
+        //printf("pvt = %3.7f, %3.7f, %4.4f, vel= %4.3f, %4.3f, %4.3f\n",data.llh(0),data.llh(1),data.llh(2),data.velNED(0),data.velNED(1),data.velNED(2));
+        //printf("dop = %4.2f, %4.2f, %4.2f, %4.2f, %4.2f\n", data.gDOP,data.pDOP,data.tDOP,data.vDOP,data.hDOP);
+        printf("cov = %f, %f, %f, %f\n", data.posCovNN, data.posCovNE, data.posCovND, data.posCovEE);
         
         thread_sleep_for(500);
     }

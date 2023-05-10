@@ -14,6 +14,7 @@ public:
     virtual ~SDCardThread();
 
     void StartThread();
+    void OpenFile();
     void CloseFile();
     
 private:

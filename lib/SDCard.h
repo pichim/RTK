@@ -12,6 +12,7 @@ class SDCard{
     SDCard();
 
     bool init();
+    bool mkfile();
     bool write_str_2_sd(char* data);
     bool write_ln();
     bool write_f_2_sd(float* data, int l);
@@ -22,6 +23,7 @@ class SDCard{
 
     private:
     bool m_init_success;
+    bool m_file_valid;
     char m_path[30];
     FATFileSystem m_fs;
     SDBlockDevice m_sd;

@@ -7,7 +7,7 @@
 #define GNSS_THREAD_PRIORITY osPriorityNormal
 #define GNSS_RTK_FIX_LED PB_9
 #define GNSS_FIX_LED PB_8
-#define GNSS_THREAD_SIZE 4096
+#define GNSS_THREAD_SIZE 8192
 #define GNSS_DO_PRINTF true
 #define GNSS_RX PA_10
 #define GNSS_TX PB_6
