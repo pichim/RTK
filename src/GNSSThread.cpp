@@ -32,8 +32,6 @@ void GNSSThread::run()
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
 
-        static Timer timer;
-        timer.start();
         m_GNSS.readGNSSdata();
 
         if(m_data.rtk_fix){

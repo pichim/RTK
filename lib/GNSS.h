@@ -79,6 +79,6 @@ class GNSS {
 
 };
 
-
+float u32tofloat(uint32_t u);
 
 #endif /* GNSS_H_ */

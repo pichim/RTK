@@ -18,7 +18,7 @@ bool GNSS::decode(int i)
         //printf("msg id = 0x%02x \n",m_msg[i].id);
 
 #endif
-
+    //m_data.activity = true;
     switch(m_msg[i].id){
 
         case(0x3b): //UBX-NAV-SVIN
@@ -138,17 +138,17 @@ bool GNSS::decode(int i)
                           | ((uint32_t)m_msg[i].data[7] << 24); //itow
 
             float tempf[3];
-            tempf[0] =    (float)((uint32_t)m_msg[i].data[8]
+            tempf[0] =    (float)(int32_t)((uint32_t)m_msg[i].data[8]
                         | ((uint32_t)m_msg[i].data[9] << 8)
                         | ((uint32_t)m_msg[i].data[10] << 16)
                         | ((uint32_t)m_msg[i].data[11] << 24)) / 100.0f; //relpos N
 
-            tempf[1] =    (float)((uint32_t)m_msg[i].data[12]
+            tempf[1] =    (float)(int32_t)((uint32_t)m_msg[i].data[12]
                         | ((uint32_t)m_msg[i].data[13] << 8)
                         | ((uint32_t)m_msg[i].data[14] << 16)
                         | ((uint32_t)m_msg[i].data[15] << 24)) / 100.0f; //relpos E
 
-            tempf[2] =    (float)((uint32_t)m_msg[i].data[16]
+            tempf[2] =    (float)(int32_t)((uint32_t)m_msg[i].data[16]
                         | ((uint32_t)m_msg[i].data[17] << 8)
                         | ((uint32_t)m_msg[i].data[18] << 16)
                         | ((uint32_t)m_msg[i].data[19] << 24)) / 100.0f; //relpos D
@@ -193,46 +193,46 @@ bool GNSS::decode(int i)
             m_data.numSV = m_msg[i].data[23];
 
             float tempf[3];
-            tempf[0] =    (float)((uint32_t)m_msg[i].data[24]
+            tempf[0] =    (float)(int32_t)((uint32_t)m_msg[i].data[24]
                         | ((uint32_t)m_msg[i].data[25] << 8)
                         | ((uint32_t)m_msg[i].data[26] << 16)
                         | ((uint32_t)m_msg[i].data[27] << 24)) / 10000000.0f; //lon
 
-            tempf[1] =    (float)((uint32_t)m_msg[i].data[28]
+            tempf[1] =    (float)(int32_t)((uint32_t)m_msg[i].data[28]
                         | ((uint32_t)m_msg[i].data[29] << 8)
                         | ((uint32_t)m_msg[i].data[30] << 16)
                         | ((uint32_t)m_msg[i].data[31] << 24)) / 10000000.0f; // lat
 
-            tempf[2] =    (float)((uint32_t)m_msg[i].data[32]
+            tempf[2] =    (float)(int32_t)((uint32_t)m_msg[i].data[32]
                         | ((uint32_t)m_msg[i].data[33] << 8)
                         | ((uint32_t)m_msg[i].data[34] << 16)
                         | ((uint32_t)m_msg[i].data[35] << 24)) / 1000.0f; // height
 
             m_data.llh << tempf[0], tempf[1], tempf[2];
 
-            tempf[0] =    (float)((uint32_t)m_msg[i].data[48]
+            tempf[0] =    (float)(int32_t)((uint32_t)m_msg[i].data[48]
                         | ((uint32_t)m_msg[i].data[49] << 8)
                         | ((uint32_t)m_msg[i].data[50] << 16)
                         | ((uint32_t)m_msg[i].data[51] << 24)) / 1000.0f; //vel N
 
-            tempf[1] =    (float)((uint32_t)m_msg[i].data[52]
+            tempf[1] =    (float)(int32_t)((uint32_t)m_msg[i].data[52]
                         | ((uint32_t)m_msg[i].data[53] << 8)
                         | ((uint32_t)m_msg[i].data[54] << 16)
                         | ((uint32_t)m_msg[i].data[55] << 24)) / 1000.0f; // vel E
 
-            tempf[2] =    (float)((uint32_t)m_msg[i].data[56]
+            tempf[2] =    (float)(int32_t)((uint32_t)m_msg[i].data[56]
                         | ((uint32_t)m_msg[i].data[57] << 8)
                         | ((uint32_t)m_msg[i].data[58] << 16)
                         | ((uint32_t)m_msg[i].data[59] << 24)) / 1000.0f; // vel D
 
             m_data.velNED << tempf[0], tempf[1], tempf[2];
 
-            m_data.gSpeed =    (float)((uint32_t)m_msg[i].data[60]
+            m_data.gSpeed =    (float)(int32_t)((uint32_t)m_msg[i].data[60]
                              | ((uint32_t)m_msg[i].data[61] << 8)
                              | ((uint32_t)m_msg[i].data[62] << 16)
                              | ((uint32_t)m_msg[i].data[63] << 24)) / 1000.0f; // ground Speed
 
-            m_data.headMotion = (float)((uint32_t)m_msg[i].data[64]
+            m_data.headMotion = (float)(int32_t)((uint32_t)m_msg[i].data[64]
                              | ((uint32_t)m_msg[i].data[65] << 8)
                              | ((uint32_t)m_msg[i].data[66] << 16)
                              | ((uint32_t)m_msg[i].data[67] << 24)) / 100000.0f; // heading
@@ -255,65 +255,65 @@ bool GNSS::decode(int i)
             m_data.posCOVvalid = m_msg[i].data[5] & 0x01;
             m_data.velCOVvalid = m_msg[i].data[6] & 0x01;
 
-            m_data.posCovNN =  (float)((uint32_t)m_msg[i].data[16]
+            m_data.posCovNN =  u32tofloat(((uint32_t)m_msg[i].data[16]
                                     | ((uint32_t)m_msg[i].data[17] << 8)
                                     | ((uint32_t)m_msg[i].data[18] << 16)
-                                    | ((uint32_t)m_msg[i].data[19] << 24));
+                                    | ((uint32_t)m_msg[i].data[19] << 24)));
             
-            m_data.posCovNE =  (float)((uint32_t)m_msg[i].data[20]
+            m_data.posCovNE =  u32tofloat(((uint32_t)m_msg[i].data[20]
                                     | ((uint32_t)m_msg[i].data[21] << 8)
                                     | ((uint32_t)m_msg[i].data[22] << 16)
-                                    | ((uint32_t)m_msg[i].data[23] << 24));
+                                    | ((uint32_t)m_msg[i].data[23] << 24)));
 
-            m_data.posCovND =  (float)((uint32_t)m_msg[i].data[24]
+            m_data.posCovND =  u32tofloat(((uint32_t)m_msg[i].data[24]
                                     | ((uint32_t)m_msg[i].data[25] << 8)
                                     | ((uint32_t)m_msg[i].data[26] << 16)
-                                    | ((uint32_t)m_msg[i].data[27] << 24));
+                                    | ((uint32_t)m_msg[i].data[27] << 24)));
             
-            m_data.posCovEE =  (float)((uint32_t)m_msg[i].data[28]
+            m_data.posCovEE =  u32tofloat(((uint32_t)m_msg[i].data[28]
                                     | ((uint32_t)m_msg[i].data[29] << 8)
                                     | ((uint32_t)m_msg[i].data[30] << 16)
-                                    | ((uint32_t)m_msg[i].data[31] << 24));
+                                    | ((uint32_t)m_msg[i].data[31] << 24)));
             
-            m_data.posCovED =  (float)((uint32_t)m_msg[i].data[32]
+            m_data.posCovED =  u32tofloat(((uint32_t)m_msg[i].data[32]
                                     | ((uint32_t)m_msg[i].data[33] << 8)
                                     | ((uint32_t)m_msg[i].data[34] << 16)
-                                    | ((uint32_t)m_msg[i].data[35] << 24));
+                                    | ((uint32_t)m_msg[i].data[35] << 24)));
 
-            m_data.posCovDD =  (float)((uint32_t)m_msg[i].data[36]
+            m_data.posCovDD =  u32tofloat(((uint32_t)m_msg[i].data[36]
                                     | ((uint32_t)m_msg[i].data[37] << 8)
                                     | ((uint32_t)m_msg[i].data[38] << 16)
-                                    | ((uint32_t)m_msg[i].data[39] << 24));
+                                    | ((uint32_t)m_msg[i].data[39] << 24)));
                                     
-            m_data.velCovNN =  (float)((uint32_t)m_msg[i].data[40]
+            m_data.velCovNN =  u32tofloat(((uint32_t)m_msg[i].data[40]
                                     | ((uint32_t)m_msg[i].data[41] << 8)
                                     | ((uint32_t)m_msg[i].data[42] << 16)
-                                    | ((uint32_t)m_msg[i].data[43] << 24));
+                                    | ((uint32_t)m_msg[i].data[43] << 24)));
             
-            m_data.velCovNE =  (float)((uint32_t)m_msg[i].data[44]
+            m_data.velCovNE =  u32tofloat(((uint32_t)m_msg[i].data[44]
                                     | ((uint32_t)m_msg[i].data[45] << 8)
                                     | ((uint32_t)m_msg[i].data[46] << 16)
-                                    | ((uint32_t)m_msg[i].data[47] << 24));
+                                    | ((uint32_t)m_msg[i].data[47] << 24)));
 
-            m_data.velCovND =  (float)((uint32_t)m_msg[i].data[48]
+            m_data.velCovND =  u32tofloat(((uint32_t)m_msg[i].data[48]
                                     | ((uint32_t)m_msg[i].data[49] << 8)
                                     | ((uint32_t)m_msg[i].data[50] << 16)
-                                    | ((uint32_t)m_msg[i].data[51] << 24));
+                                    | ((uint32_t)m_msg[i].data[51] << 24)));
             
-            m_data.velCovEE =  (float)((uint32_t)m_msg[i].data[52]
+            m_data.velCovEE =  u32tofloat(((uint32_t)m_msg[i].data[52]
                                     | ((uint32_t)m_msg[i].data[53] << 8)
                                     | ((uint32_t)m_msg[i].data[54] << 16)
-                                    | ((uint32_t)m_msg[i].data[55] << 24));
+                                    | ((uint32_t)m_msg[i].data[55] << 24)));
             
-            m_data.velCovED =  (float)((uint32_t)m_msg[i].data[56]
+            m_data.velCovED =  u32tofloat(((uint32_t)m_msg[i].data[56]
                                     | ((uint32_t)m_msg[i].data[57] << 8)
                                     | ((uint32_t)m_msg[i].data[58] << 16)
-                                    | ((uint32_t)m_msg[i].data[59] << 24));
+                                    | ((uint32_t)m_msg[i].data[59] << 24)));
 
-            m_data.velCovDD =  (float)((uint32_t)m_msg[i].data[60]
+            m_data.velCovDD =  u32tofloat(((uint32_t)m_msg[i].data[60]
                                     | ((uint32_t)m_msg[i].data[61] << 8)
                                     | ((uint32_t)m_msg[i].data[62] << 16)
-                                    | ((uint32_t)m_msg[i].data[63] << 24));
+                                    | ((uint32_t)m_msg[i].data[63] << 24)));
 
         break;
         }
@@ -355,6 +355,7 @@ bool GNSS::decode(int i)
         
 #endif
     }
+    //m_data.activity = false;
     m_msg[i].reset();
     return ret;
 }
@@ -366,6 +367,14 @@ uint8_t GNSS::readGNSSdata()
     char buffer[BUFFER_SIZE+GNSS_UART_MAX_CARRY_BYTES];
     static int msg_length = 0;
     static int n_carry_bytes = 0;
+    static uint16_t header_ref = 0xB562; //
+    static uint16_t header = 0;
+    static uint8_t ck_a = 0;
+    static uint8_t ck_b = 0;
+    static int i = 0;
+    static int offset = 0;
+    static int32_t remaining_bytes = 0;
+    static uint8_t sum;
 
     
 
@@ -390,14 +399,10 @@ uint8_t GNSS::readGNSSdata()
 
 #endif
 
-    static uint16_t header_ref = 0xB562; //
-    static uint16_t header = 0;
-    static uint8_t ck_a = 0;
-    static uint8_t ck_b = 0;
-    int i = 0;
-    int offset = 0;
-    int32_t remaining_bytes = msg_length;
-    bool loop = true;
+    i = 0;
+    offset = 0;
+    remaining_bytes = msg_length;
+    //bool loop = true;
 
     while(remaining_bytes){
         header = (uint16_t)buffer[offset + 0] << 8 | (uint16_t)buffer[offset + 1];
@@ -467,14 +472,18 @@ uint8_t GNSS::readGNSSdata()
     }
     
     
-    int sum = 0;
+    sum = 0;
     for(int i = 0; i < m_msg_index; i++){
-        if(m_msg[i].is_valid) sum += decode(i);
+        if(m_msg[i].is_valid){
+            if(decode(i)){
+                sum++;
+            }
+        }
     }
-    m_msg_index = 0;
+    
 
 #if GNSS_DO_PRINTF
-    //printf("number of msg = %u \n",m_msg_index+1);
+    printf("number of msg = %u \n",m_msg_index);
     printf("sum = %i\n",sum); 
     /*
     if(msg_length >= 0){
@@ -485,6 +494,7 @@ uint8_t GNSS::readGNSSdata()
     }
     */
 #endif
+    m_msg_index = 0;
     
 
     return sum;
@@ -496,9 +506,7 @@ bool GNSS::init()
     m_uart.set_baud(GNSS_UART_BAUD);
     m_uart.set_blocking(false);
     m_uart.set_format(8,BufferedSerial::None,1);
-    
-    //m_num_carry_bytes = 0;
-    //fill_n(m_carry_bytes,GNSS_UART_MAX_CARRY_BYTES,0);
+
     m_msg_index = 0;
     return true;
 }
@@ -554,4 +562,15 @@ time_t GNSS::date2sec(uint16_t yyyy_, uint8_t mm_, uint8_t dd_, uint8_t hh_, uin
     t_of_day = mktime(&t);
 
     return t_of_day;
+}
+
+float u32tofloat(uint32_t u){
+    /*
+    static union u32_float{
+        uint32_t i;
+        float f;
+    } tofloat;
+    tofloat.i = u;
+    */
+    return *(float*)&u;
 }

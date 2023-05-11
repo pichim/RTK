@@ -7,6 +7,7 @@ SDCard::SDCard() : m_fs("sd"), m_sd(PC_12, PC_11, PC_10, PD_2){
 
 
 bool SDCard::init() {
+    printf("initalizing\n");
     if (0 != m_sd.init()) {
         //printf("Init failed \n");
         return 0;

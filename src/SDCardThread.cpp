@@ -4,11 +4,16 @@
 
 SDCardThread::SDCardThread(Data& data) :
     m_data(data),
-    m_thread(SDCARD_THREAD_PRIORITY, SDCARD_THREAD_SIZE)
+    m_thread(SDCARD_THREAD_PRIORITY, SDCARD_THREAD_SIZE),
+    m_led(PB_15)
 {
     m_sdThread_running = false;
     m_data = data;
     //m_buffer = (uint8_t*)malloc(SDCARD_BUFFER_SIZE);
+    if(!m_sd.init()) {
+            //if this fails all operations will be ignored (in case you wanna use it without sd card)
+            printf("SD init failed\n");
+    }
 }
 
 SDCardThread::~SDCardThread()
@@ -19,10 +24,7 @@ SDCardThread::~SDCardThread()
 void SDCardThread::StartThread()
 {
     if(m_sdThread_running) return;
-    if(!m_sd.init()) {
-            //if this fails all operations will be ignored (in case you wanna use it without sd card)
-            printf("SD init failed\n");
-    }
+
     m_thread.start(callback(this, &SDCardThread::run));
     m_ticker.attach(callback(this, &SDCardThread::sendThreadFlag), std::chrono::milliseconds{ static_cast<long int>( SDCARD_THREAD_TS_MS ) });
 
@@ -38,20 +40,25 @@ void SDCardThread::run()
 {
 
     static float buffer_f[9+1+12+7+3+3+5*3]; //=50 / 200 bytes
+    static int i_f = 0;
     static uint32_t buffer_u32[4+2]; //3 from param.h and 2 from time and index =6 / 24 bytes
+    static int i_u32 = 0;
     static uint8_t buffer_u8[4]; //4 bytes
+    static int i_u8 = 0;
     static bool buffer_b[8]; //8 bytes
+    static int i_b = 0;
+    static Timer timer;
 
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
-        
-        int i_f = 0;
-        int i_u32 = 0;
-        int i_u8 = 0;
-        int i_b = 0;
-
-        static Timer timer;
         timer.start();
+        
+
+        i_f = 0;
+        i_u32 = 0;
+        i_u8 = 0;
+        i_b = 0;
+        
         
         buffer_u32[i_u32++] = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
         buffer_u32[i_u32++]++;
@@ -62,6 +69,7 @@ void SDCardThread::run()
                                                                          m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
                                                                          m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
 #endif
+        
         
         buffer_f[i_f++] = m_data.gyro(0);
         buffer_f[i_f++] = m_data.gyro(1);

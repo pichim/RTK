@@ -22,6 +22,7 @@ private:
     ThreadFlag m_threadFlag;
     Thread m_thread;
     Ticker m_ticker;
+    DigitalOut m_led;
     //uint8_t* m_buffer;
     
     bool m_sdThread_running;
