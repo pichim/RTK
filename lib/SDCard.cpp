@@ -12,7 +12,7 @@ bool SDCard::init() {
         //printf("Init failed \n");
         return 0;
     }
-    
+    ThisThread::sleep_for(1s);
     if (0 != m_sd.frequency(1000000)) {
         //printf("Error setting frequency \n");
     }

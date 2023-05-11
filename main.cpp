@@ -16,15 +16,16 @@ DebounceIn user_button(PC_13);
 void user_button_pressed_fcn();
 bool do_close_sd_file = false;
 DigitalOut user_led(LED1);
+DigitalOut gnss_fix_led(GNSS_FIX_LED);
+DigitalOut rtk_fix_led(GNSS_RTK_FIX_LED);
 
 int main(){
 
     user_button.fall(&user_button_pressed_fcn);
 
     Data data;
-    printf("program Start\n");
+    printf("Program Start\n");
 
-    
     IMUThread imuThread(data);
     GNSSThread GNSSThread(data);
     SDCardThread sdCardThread(data);
@@ -33,10 +34,10 @@ int main(){
     imuThread.StartThread();
     //sdCardThread.StartThread();
     
-
     //ideally wait till gnss time is valid
     
-    
+    gnss_fix_led = 0;
+    rtk_fix_led = 0;
 
     while(true) {
 
@@ -52,6 +53,20 @@ int main(){
             sdCardThread.CloseFile();
         }
         user_led = !user_led;
+
+        if(data.rtk_fix){
+            rtk_fix_led = 1;
+        } else if(data.rtk_float){
+            rtk_fix_led = !rtk_fix_led; //blink at whatever rate the system is running
+        } else {
+            rtk_fix_led = 0;
+        }
+        
+        if(data.gnss_fix){
+            gnss_fix_led = 1;
+        } else {
+            gnss_fix_led = 0;
+        }
         
         //printf("hpposllh = %3.9f, %3.9f, %4.4f\n",data.longitude_hp,data.latitude_hp,data.hpLlh(2));
         //printf("relposned = %4.4f, %4.4f, %4.4f\n", data.relPosNED(0), data.relPosNED(1), data.relPosNED(2));
