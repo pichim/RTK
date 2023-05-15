@@ -378,7 +378,7 @@ uint8_t GNSS::readGNSSdata()
 
     
 
-    //msg_length = m_uart.read(buffer+n_carry_bytes, BUFFER_SIZE+GNSS_UART_MAX_CARRY_BYTES-n_carry_bytes);
+    msg_length = m_uart.read(buffer+n_carry_bytes, BUFFER_SIZE+GNSS_UART_MAX_CARRY_BYTES-n_carry_bytes);
     
     if(msg_length <= 0){
         n_carry_bytes = 0;
@@ -396,7 +396,6 @@ uint8_t GNSS::readGNSSdata()
     }
     printf("\n");
     */
-
 #endif
 
     i = 0;
@@ -475,11 +474,9 @@ uint8_t GNSS::readGNSSdata()
     sum = 0;
     for(int i = 0; i < m_msg_index; i++){
         if(m_msg[i].is_valid){
-            //_mutex.lock();
             if(decode(i)){
                 sum++;
             }
-            //_mutex.unlock();
         }
     }
     
@@ -505,9 +502,9 @@ uint8_t GNSS::readGNSSdata()
 
 bool GNSS::init() {
 
-    //m_uart.set_baud(GNSS_UART_BAUD);
-    //m_uart.set_blocking(false);
-    //m_uart.set_format(8,BufferedSerial::None,1);
+    m_uart.set_baud(GNSS_UART_BAUD);
+    m_uart.set_blocking(false);
+    m_uart.set_format(8,BufferedSerial::None,1);
 
     m_msg_index = 0;
     return true;

@@ -32,7 +32,7 @@ int main()
     SDCardThread sdCardThread(data);
 
 
-    sdCardThread.StartThread();
+    //sdCardThread.StartThread();
     GNSSThread.StartThread();
     imuThread.StartThread();
     
@@ -47,7 +47,7 @@ int main()
         
         if (do_close_sd_file) {
 
-            //sdCardThread.CloseFile();
+            sdCardThread.CloseFile();
         }
         user_led = !user_led;
 

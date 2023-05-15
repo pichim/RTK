@@ -32,7 +32,7 @@ void GNSSThread::run()
         // printf's here
         // printf("meanAcc = %f\n", m_data.meanAcc_SVIN);
         // printf("itow = %u\n", m_data.itow);
-        printf("msss = %u ms\n",m_data.msss);
+        // printf("msss = %u ms\n",m_data.msss);
 #endif
 
     }
