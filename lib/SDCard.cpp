@@ -80,52 +80,32 @@ bool SDCard::write_ln(){
 }
 
 
-bool SDCard::write_f_2_sd(float* data, int l){
-    if(!m_init_success) return 0;
+bool SDCard::write_f_2_sd(float* data, int l) {
 
-    size_t n_written = fwrite(data, sizeof(float), l, m_fp);
-
-    if (n_written != l){
-        printf("SDCard Write failed\n");
-    }
+    if (!write_sd(data, sizeof(float), l)) return 0;
 
     return 1;
 }
 
 
 bool SDCard::write_u32_2_sd(uint32_t* data, int l) {
-    if(!m_init_success) return 0;
 
-    size_t n_written = fwrite(data, sizeof(uint32_t), l, m_fp);
-
-    if (n_written != l){
-        printf("SDCard Write failed\n");
-    }
+    if (!write_sd(data, sizeof(uint32_t), l)) return 0;
 
     return 1;
 }
 
-bool SDCard::write_u8_2_sd(uint8_t* data, int l){
-    if(!m_init_success) return 0;
+bool SDCard::write_u8_2_sd(uint8_t* data, int l) {
 
-    size_t n_written = fwrite(data, sizeof(uint8_t), l, m_fp);
-
-    if (n_written != l){
-        printf("SDCard Write failed\n");
-    }
-
+    if (!write_sd(data, sizeof(uint32_t), l)) return 0;
+    
     return 1;
 }
 
 //TODO: compress individual bits into one byte
-bool SDCard::write_bool_2_sd(bool* data, int l){
-    if(!m_init_success) return 0;
+bool SDCard::write_bool_2_sd(bool* data, int l) {
 
-    size_t n_written = fwrite(data, sizeof(bool), l, m_fp);
-
-    if (n_written != l){
-        printf("SDCard Write failed\n");
-    }
+    if (!write_sd(data, sizeof(bool), l)) return 0;
 
     return 1;
 }
@@ -139,6 +119,25 @@ bool SDCard::close(){
     if(0 != m_sd.deinit()){
         return 0;
     }
+    printf("closed file\n");
     
+    return 1;
+}
+
+
+bool SDCard::write_sd(void* data, int s, int l){
+    
+    if(!m_init_success) return 0;
+    
+    //_mutex.lock();
+    size_t n_written = fwrite(data, s, l, m_fp);
+    //_mutex.unlock();
+
+    if (n_written != l){
+        printf("SDCard Write failed\n");
+        return 0;
+    }
+    
+
     return 1;
 }

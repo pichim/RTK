@@ -26,6 +26,10 @@ class SDCard{
     FATFileSystem m_fs;
     SDBlockDevice m_sd;
     FILE* m_fp;
+
+    PlatformMutex _mutex;
+    
+    bool write_sd(void* data, int s, int l);
 };
 
 #endif /* SDCARD_H_ */

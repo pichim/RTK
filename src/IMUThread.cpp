@@ -79,7 +79,6 @@ void IMUThread::run()
             m_data.acc -= acc_offset;
 #endif
         }
-
         mag = m_magCalib.ApplyCalibration(mag);
         m_data.mag = mag;
 
@@ -91,6 +90,7 @@ void IMUThread::run()
                                                                                m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
                                                                                m_data.mag(0) , m_data.mag(1) , m_data.mag(2) , time_ms);
 #endif
+        
     }
 }
 

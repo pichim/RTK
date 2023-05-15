@@ -38,38 +38,42 @@ void SDCardThread::CloseFile() {
 
 void SDCardThread::run()
 {
-
-    static float buffer_f[9+1+12+7+3+3+5*3]; //=50 / 200 bytes
+    const int n_buffer_f = 50;
     static int i_f = 0;
-    static uint32_t buffer_u32[4+2]; //3 from param.h and 2 from time and index =6 / 24 bytes
+    static float buffer_f[n_buffer_f]; //=50 / 200 bytes
+
+    const int n_buffer_u32 = 6;
     static int i_u32 = 0;
-    static uint8_t buffer_u8[4]; //4 bytes
+    static uint32_t buffer_u32[n_buffer_u32]; //3 from param.h and 2 from time and index =6 / 24 bytes
+
+    const int n_buffer_u8 = 4;
     static int i_u8 = 0;
-    static bool buffer_b[8]; //8 bytes
+    static uint8_t buffer_u8[n_buffer_u8]; //4 bytes
+
+    const int n_buffer_b = 8;
     static int i_b = 0;
+    static bool buffer_b[n_buffer_b]; //8 bytes
+
     static Timer timer;
 
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
+
         timer.start();
         
-
         i_f = 0;
         i_u32 = 0;
         i_u8 = 0;
         i_b = 0;
         
-        
         buffer_u32[i_u32++] = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
         buffer_u32[i_u32++]++;
         
-
 #if SDCARD_DO_PRINTF
         printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f\n", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
                                                                          m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
                                                                          m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
 #endif
-        
         
         buffer_f[i_f++] = m_data.gyro(0);
         buffer_f[i_f++] = m_data.gyro(1);
@@ -164,10 +168,12 @@ void SDCardThread::run()
         //char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
         //m_sd.write2sd(buffer_c,data_length);
         //printf("indexed: f = %i, u32 = %i, u8 = %i, b = %i, Total Bytes = %i\n", i_f, i_u32, i_u8, i_b, (i_f*4+i_u32*4+i_u8+i_b));
-	    m_sd.write_f_2_sd(buffer_f, i_f);
-        m_sd.write_u32_2_sd(buffer_u32, i_u32);
-        m_sd.write_u8_2_sd(buffer_u8, i_u8);
-        m_sd.write_bool_2_sd(buffer_b, i_b);
+	    
+        m_sd.write_f_2_sd(buffer_f, n_buffer_f);
+        m_sd.write_u32_2_sd(buffer_u32, n_buffer_u32);
+        m_sd.write_u8_2_sd(buffer_u8, n_buffer_u8);
+        m_sd.write_bool_2_sd(buffer_b, n_buffer_b);
+
     }
 }
 

@@ -1,6 +1,10 @@
 {
     "target_overrides": {
         "*": {
+            "sd.SPI_MOSI" : "PC_12",
+            "sd.SPI_MISO" : "PC_11",
+            "sd.SPI_CLK"  : "PC_10",
+            "sd.SPI_CS"   : "PD_2",
             "target.components_add": ["SD"],
             "target.printf_lib": "std",
             "platform.stdio-baud-rate": 115200,

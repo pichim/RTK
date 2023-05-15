@@ -67,6 +67,8 @@ class GNSS {
         Data& m_data;
         BufferedSerial m_uart;
 
+        PlatformMutex _mutex;
+
 
         bool init();
         bool checksum(int i); // not working
