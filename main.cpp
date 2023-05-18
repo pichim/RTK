@@ -40,7 +40,7 @@ int main(){
     imuThread.StartThread();
 
     //ThisThread::sleep_for(1s);
-    
+
     sdCardThread.OpenFile();
     sdCardThread.StartThread();
     
