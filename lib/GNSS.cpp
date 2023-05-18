@@ -382,7 +382,7 @@ uint8_t GNSS::readGNSSdata()
     n_carry_bytes = 0;
 
 #if GNSS_DO_PRINTF
-    //printf("l = %i\n", msg_length);
+    printf("l = %i\n", msg_length);
     /*
     for(int ii = 0; ii < msg_length; ii++){
         printf("%02x ",buffer[ii]);
@@ -399,7 +399,7 @@ uint8_t GNSS::readGNSSdata()
     int i = 0;
     int offset = 0;
     int32_t remaining_bytes = msg_length;
-    bool loop = true;
+    //bool loop = true;
 
     while(remaining_bytes){
         header = (uint16_t)buffer[offset + 0] << 8 | (uint16_t)buffer[offset + 1];
@@ -479,7 +479,7 @@ uint8_t GNSS::readGNSSdata()
 
 #if GNSS_DO_PRINTF
     //printf("number of msg = %u \n",m_msg_index+1);
-    //printf("sum = %i\n",sum);
+    printf("sum = %i\n",sum);
     /*
     if(msg_length >= 0){
         for(int i = 0; i < msg_length; i++){

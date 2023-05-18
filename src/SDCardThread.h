@@ -26,6 +26,7 @@ private:
     //uint8_t* m_buffer;
     
     bool m_sdThread_running;
+    bool m_sd_present;
     void run();
     void sendThreadFlag();
 };
