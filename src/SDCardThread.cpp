@@ -40,21 +40,21 @@ void SDCardThread::run()
 {
     const int n_buffer_f = 50;
     static int i_f = 0;
-    static float buffer_f[n_buffer_f]; //=50 / 200 bytes
+    float buffer_f[n_buffer_f]; //=50 / 200 bytes
 
     const int n_buffer_u32 = 6;
     static int i_u32 = 0;
-    static uint32_t buffer_u32[n_buffer_u32]; //3 from param.h and 2 from time and index =6 / 24 bytes
+    uint32_t buffer_u32[n_buffer_u32]; //3 from param.h and 2 from time and index =6 / 24 bytes
 
     const int n_buffer_u8 = 4;
     static int i_u8 = 0;
-    static uint8_t buffer_u8[n_buffer_u8]; //4 bytes
+    uint8_t buffer_u8[n_buffer_u8]; //4 bytes
 
     const int n_buffer_b = 8;
     static int i_b = 0;
-    static bool buffer_b[n_buffer_b]; //8 bytes
+    bool buffer_b[n_buffer_b]; //8 bytes
 
-    static Timer timer;
+    Timer timer;
 
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);

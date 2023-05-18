@@ -31,8 +31,7 @@ int main()
     GNSSThread GNSSThread(data);
     SDCardThread sdCardThread(data);
 
-
-    //sdCardThread.StartThread();
+    sdCardThread.StartThread();
     GNSSThread.StartThread();
     imuThread.StartThread();
     
