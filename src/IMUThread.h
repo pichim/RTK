@@ -12,13 +12,14 @@
 class IMUThread
 {
 public:
-    IMUThread(Data& data);
+    IMUThread(Data& data, Mutex& mutex);
     virtual ~IMUThread();
 
     void StartThread();
     
 private:
     Data& m_data;
+    Mutex& m_dataMutex;
     LSM9DS1 m_imu;
     LinearCharacteristics3 m_magCalib;
     Mahony m_mahony;

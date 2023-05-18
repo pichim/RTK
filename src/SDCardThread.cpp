@@ -2,9 +2,11 @@
 #include <chrono>
 #include <cstdio>
 
-SDCardThread::SDCardThread(Data& data) :
+SDCardThread::SDCardThread(Data& data, Mutex& mutex_1, Mutex& mutex_2) :
     m_data(data),
-    m_thread(SDCARD_THREAD_PRIORITY, SDCARD_THREAD_SIZE)
+    m_thread(SDCARD_THREAD_PRIORITY, SDCARD_THREAD_SIZE),
+    m_dataMutex_1(mutex_1),
+    m_dataMutex_2(mutex_2)
 {
     m_sdThread_running = false;
     m_sd_present = false;
@@ -82,7 +84,8 @@ void SDCardThread::run()
                                                                             m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,
                                                                             m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
 #endif
-            
+            m_dataMutex_1.lock();
+
             buffer_f[i_f++] = m_data.gyro(0);
             buffer_f[i_f++] = m_data.gyro(1);
             buffer_f[i_f++] = m_data.gyro(2);
@@ -93,6 +96,10 @@ void SDCardThread::run()
             buffer_f[i_f++] = m_data.mag(1);
             buffer_f[i_f++] = m_data.mag(2);
             
+            m_dataMutex_1.unlock();
+
+            m_dataMutex_2.lock();
+
             buffer_u32[i_u32++] = m_data.itow;
 
             //UBX-NAV-SVIN (BASE)
@@ -173,11 +180,13 @@ void SDCardThread::run()
 
             buffer_u8[i_u8++] = m_data.lastCorrectionAge;
 
+            m_dataMutex_2.unlock();
+
             //char rover_header[] = "itow[ms];carrSoln;lon;lat;height[m];x[mm];y[mm];z[mm];hAcc[mm];vAcc[mm];LoRa_valid;SNR;RSSI;ax;az;az;gx;gy;gz;\n";
             //m_sd.write2sd(buffer_c,data_length);
             //printf("indexed: f = %i, u32 = %i, u8 = %i, b = %i, Total Bytes = %i\n", i_f, i_u32, i_u8, i_b, (i_f*4+i_u32*4+i_u8+i_b));
 
-            //m_sd.sdMutexLock(); //prevent file closing mid writing
+            //m_sd.sdMutexLock();
 
             m_sd.write_f_2_sd(buffer_f, i_f);
             m_sd.write_u32_2_sd(buffer_u32, i_u32);

@@ -53,7 +53,7 @@ class UBXDATA
 class GNSS {
 
     public:
-        GNSS(PinName, PinName, Data& data);
+        GNSS(PinName, PinName, Data& data, Mutex& dataMutex);
 
         bool decode(int i);
         uint8_t readGNSSdata();
@@ -65,6 +65,7 @@ class GNSS {
         uint8_t m_msg_index;
         UBXDATA m_msg[GNSS_MAX_UBX_MSG];
         Data& m_data;
+        Mutex& m_dataMutex;
         BufferedSerial m_uart;
 
 

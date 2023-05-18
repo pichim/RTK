@@ -3,12 +3,12 @@
 #define BUFFER_SIZE 512
 
 
-GNSS::GNSS(PinName rx, PinName tx, Data& data) :
+GNSS::GNSS(PinName rx, PinName tx, Data& data, Mutex& dataMutex) :
     m_uart(rx, tx),
-    m_data(data)
+    m_data(data),
+    m_dataMutex(dataMutex)
 {
     init();
-
 }
 
 bool GNSS::decode(int i)
@@ -402,11 +402,13 @@ uint8_t GNSS::readGNSSdata()
     
     
     int sum = 0;
+    m_dataMutex.lock();
     for(int i = 0; i < m_msg_index; i++){
         if(m_msg[i].is_valid){
             if(decode(i)) sum++;
         } 
     }
+    m_dataMutex.unlock();
    
 
 #if GNSS_DO_PRINTF

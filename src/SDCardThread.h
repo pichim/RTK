@@ -10,7 +10,7 @@
 class SDCardThread
 {
 public:
-    SDCardThread(Data& data);
+    SDCardThread(Data& data, Mutex& mutex_1, Mutex& mutex_2);
     virtual ~SDCardThread();
 
     void StartThread();
@@ -19,6 +19,8 @@ public:
     
 private:
     Data& m_data;
+    Mutex& m_dataMutex_1;
+    Mutex& m_dataMutex_2;
     SDCard m_sd;
     ThreadFlag m_threadFlag;
     Thread m_thread;

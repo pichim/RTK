@@ -2,11 +2,12 @@
 #include <chrono>
 #include <cstdint>
 
-IMUThread::IMUThread(Data& data) :
+IMUThread::IMUThread(Data& data, Mutex& mutex) :
     m_data(data),
     m_imu(IMU_PIN_SDA, IMU_PIN_SCL),
     m_mahony(Param::IMU::kp, Param::IMU::ki, IMU_THREAD_TS_MS * 1.0e-3f),
-    m_thread(IMU_THREAD_PRIORITY, IMU_THREAD_SIZE)
+    m_thread(IMU_THREAD_PRIORITY, IMU_THREAD_SIZE),
+    m_dataMutex(mutex)
 {
 #if IMU_DO_USE_MAG_CALIBRATION
     m_magCalib.SetCalibrationParameter(Param::IMU::A_mag, Param::IMU::b_mag);   
@@ -64,6 +65,8 @@ void IMUThread::run()
 #endif
             mag = m_magCalib.ApplyCalibration(mag);
 
+            m_dataMutex.lock();
+
             m_data.gyro = gyro;
             m_data.acc = acc;
             m_data.mag = mag;
@@ -75,6 +78,8 @@ void IMUThread::run()
 #endif
             m_data.quat = m_mahony.GetOrientationAsQuaternion();
             m_data.rpy = m_mahony.GetOrientationAsRPYAngles();
+
+            m_dataMutex.unlock();
         }
 
 #if IMU_DO_PRINTF

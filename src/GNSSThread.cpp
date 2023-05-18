@@ -2,8 +2,8 @@
 #include <chrono>
 #include <cstdio>
 
-GNSSThread::GNSSThread(Data& data) :
-    m_GNSS(GNSS_TX, GNSS_RX, data),
+GNSSThread::GNSSThread(Data& data, Mutex& _mutex_1) :
+    m_GNSS(GNSS_TX, GNSS_RX, data, _mutex_1),
     m_data(data),
     m_thread(GNSS_THREAD_PRIORITY, GNSS_THREAD_SIZE)
 {

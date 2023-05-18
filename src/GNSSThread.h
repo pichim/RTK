@@ -10,7 +10,7 @@
 class GNSSThread
 {
 public:
-    GNSSThread(Data& data);
+    GNSSThread(Data& data, Mutex& _mutex_1);
     virtual ~GNSSThread();
 
     void StartThread();
