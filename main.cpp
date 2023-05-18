@@ -27,18 +27,23 @@ int main(){
     user_button.fall(&user_button_pressed_fcn);
 
     Data data;
+    //Mutex imuMutex;
+    //Mutex gnssMutex;
+
     printf("program Start\n");
 
+    SDCardThread sdCardThread(data);
     GNSSThread GNSSThread(data);
-    GNSSThread.StartThread();
     IMUThread imuThread(data);
+
+    GNSSThread.StartThread();
     imuThread.StartThread();
 
-    ThisThread::sleep_for(1s);
-
-    SDCardThread sdCardThread(data);
-    sdCardThread.StartThread();
+    //ThisThread::sleep_for(1s);
+    
     sdCardThread.OpenFile();
+    sdCardThread.StartThread();
+    
 
     while(true) {
 

@@ -125,10 +125,12 @@ bool SDCard::close() {
     if(m_file_valid){
         fclose(m_fp);
         m_file_valid = 0;
+        printf("closing file\n");
     }
     if(m_init_success){
         m_sd.deinit(); //must be here else expect to have crashes
         m_init_success = 0;
+        printf("unmounting SD card\n");
     }
 
     //m_sdMutex.unlock();

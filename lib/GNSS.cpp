@@ -247,105 +247,37 @@ bool GNSS::decode(int i)
         }
         case(0x36): //UBX-NAV-COV
         {
-            
-            
-            m_data.itow =      (uint32_t)m_msg[i].data[0]
-                            | ((uint32_t)m_msg[i].data[1] << 8)
-                            | ((uint32_t)m_msg[i].data[2] << 16)
-                            | ((uint32_t)m_msg[i].data[3] << 24);
+            m_data.itow = *(uint32_t*)(m_msg[i].data + 0);
 
             m_data.posCOVvalid = m_msg[i].data[5] & 0x01;
             m_data.velCOVvalid = m_msg[i].data[6] & 0x01;
 
-            m_data.posCovNN = u32tofloat( ((uint32_t)m_msg[i].data[16]
-                                        | ((uint32_t)m_msg[i].data[17] << 8)
-                                        | ((uint32_t)m_msg[i].data[18] << 16)
-                                        | ((uint32_t)m_msg[i].data[19] << 24)));
-
-            m_data.posCovNE = u32tofloat( ((uint32_t)m_msg[i].data[20]
-                                        | ((uint32_t)m_msg[i].data[21] << 8)
-                                        | ((uint32_t)m_msg[i].data[22] << 16)
-                                        | ((uint32_t)m_msg[i].data[23] << 24)));
-
-            m_data.posCovND = u32tofloat( ((uint32_t)m_msg[i].data[24]
-                                        | ((uint32_t)m_msg[i].data[25] << 8)
-                                        | ((uint32_t)m_msg[i].data[26] << 16)
-                                        | ((uint32_t)m_msg[i].data[27] << 24)));
-            
-            m_data.posCovEE = u32tofloat( ((uint32_t)m_msg[i].data[28]
-                                        | ((uint32_t)m_msg[i].data[29] << 8)
-                                        | ((uint32_t)m_msg[i].data[30] << 16)
-                                        | ((uint32_t)m_msg[i].data[31] << 24)));
-            
-            m_data.posCovED = u32tofloat( ((uint32_t)m_msg[i].data[32]
-                                        | ((uint32_t)m_msg[i].data[33] << 8)
-                                        | ((uint32_t)m_msg[i].data[34] << 16)
-                                        | ((uint32_t)m_msg[i].data[35] << 24)));
-
-            m_data.posCovDD = u32tofloat( ((uint32_t)m_msg[i].data[36]
-                                        | ((uint32_t)m_msg[i].data[37] << 8)
-                                        | ((uint32_t)m_msg[i].data[38] << 16)
-                                        | ((uint32_t)m_msg[i].data[39] << 24)));
-                                    
-            m_data.velCovNN = u32tofloat( ((uint32_t)m_msg[i].data[40]
-                                        | ((uint32_t)m_msg[i].data[41] << 8)
-                                        | ((uint32_t)m_msg[i].data[42] << 16)
-                                        | ((uint32_t)m_msg[i].data[43] << 24)));
-            
-            m_data.velCovNE = u32tofloat( ((uint32_t)m_msg[i].data[44]
-                                        | ((uint32_t)m_msg[i].data[45] << 8)
-                                        | ((uint32_t)m_msg[i].data[46] << 16)
-                                        | ((uint32_t)m_msg[i].data[47] << 24)));
-
-            m_data.velCovND = u32tofloat( ((uint32_t)m_msg[i].data[48]
-                                        | ((uint32_t)m_msg[i].data[49] << 8)
-                                        | ((uint32_t)m_msg[i].data[50] << 16)
-                                        | ((uint32_t)m_msg[i].data[51] << 24)));
-            
-            m_data.velCovEE = u32tofloat( ((uint32_t)m_msg[i].data[52]
-                                        | ((uint32_t)m_msg[i].data[53] << 8)
-                                        | ((uint32_t)m_msg[i].data[54] << 16)
-                                        | ((uint32_t)m_msg[i].data[55] << 24)));
-            
-            m_data.velCovED = u32tofloat( ((uint32_t)m_msg[i].data[56]
-                                        | ((uint32_t)m_msg[i].data[57] << 8)
-                                        | ((uint32_t)m_msg[i].data[58] << 16)
-                                        | ((uint32_t)m_msg[i].data[59] << 24)));
-
-            m_data.velCovDD = u32tofloat( ((uint32_t)m_msg[i].data[60]
-                                        | ((uint32_t)m_msg[i].data[61] << 8)
-                                        | ((uint32_t)m_msg[i].data[62] << 16)
-                                        | ((uint32_t)m_msg[i].data[63] << 24)));
+            m_data.posCovNN = *(float*)(m_msg[i].data + 16);
+            m_data.posCovNE = *(float*)(m_msg[i].data + 20);
+            m_data.posCovND = *(float*)(m_msg[i].data + 24);
+            m_data.posCovEE = *(float*)(m_msg[i].data + 28);
+            m_data.posCovED = *(float*)(m_msg[i].data + 32);
+            m_data.posCovDD = *(float*)(m_msg[i].data + 36);
+            m_data.velCovNN = *(float*)(m_msg[i].data + 40);
+            m_data.velCovNE = *(float*)(m_msg[i].data + 44);
+            m_data.velCovND = *(float*)(m_msg[i].data + 48);
+            m_data.velCovEE = *(float*)(m_msg[i].data + 52);
+            m_data.velCovED = *(float*)(m_msg[i].data + 56);
+            m_data.velCovDD = *(float*)(m_msg[i].data + 60);
 
         break;
         }
         case(0x04): //UBX-NAV-DOP
         {
-            m_data.itow =      (uint32_t)m_msg[i].data[0]
-                            | ((uint32_t)m_msg[i].data[1] << 8)
-                            | ((uint32_t)m_msg[i].data[2] << 16)
-                            | ((uint32_t)m_msg[i].data[3] << 24);
+            m_data.itow = *(uint32_t*)(m_msg[i].data + 0);
 
-            m_data.gDOP =  (float)((uint32_t)m_msg[i].data[4]
-                                | ((uint32_t)m_msg[i].data[5] << 8)) / 100.0f; // Geometric DOP
-            
-            m_data.pDOP =  (float)((uint32_t)m_msg[i].data[6]
-                                | ((uint32_t)m_msg[i].data[7] << 8)) / 100.0f; // Position DOP
-            
-            m_data.tDOP =  (float)((uint32_t)m_msg[i].data[8]
-                                | ((uint32_t)m_msg[i].data[9] << 8)) / 100.0f; // Time DOP
-            
-            m_data.vDOP =  (float)((uint32_t)m_msg[i].data[10]
-                                | ((uint32_t)m_msg[i].data[11] << 8)) / 100.0f; // vertical DOP
-
-            m_data.hDOP =  (float)((uint32_t)m_msg[i].data[12]
-                                | ((uint32_t)m_msg[i].data[13] << 8)) / 100.0f; // horizontal DOP
-            
-            m_data.nDOP =  (float)((uint32_t)m_msg[i].data[14]
-                                | ((uint32_t)m_msg[i].data[15] << 8)) / 100.0f; // Northing DOP
-            
-            m_data.eDOP =  (float)((uint32_t)m_msg[i].data[16]
-                                | ((uint32_t)m_msg[i].data[17] << 8)) / 100.0f; // Easting DOP
+            m_data.gDOP = ((float)*(uint16_t*)(m_msg[i].data +  4)) / 100.0f;// Geometric DOP
+            m_data.pDOP = ((float)*(uint16_t*)(m_msg[i].data +  6)) / 100.0f;// Position DOP
+            m_data.tDOP = ((float)*(uint16_t*)(m_msg[i].data +  8)) / 100.0f;// Time DOP
+            m_data.vDOP = ((float)*(uint16_t*)(m_msg[i].data + 10)) / 100.0f;// vertical DOP
+            m_data.hDOP = ((float)*(uint16_t*)(m_msg[i].data + 12)) / 100.0f;// horizontal DOP
+            m_data.nDOP = ((float)*(uint16_t*)(m_msg[i].data + 14)) / 100.0f;// Northing DOP
+            m_data.eDOP = ((float)*(uint16_t*)(m_msg[i].data + 16)) / 100.0f;// Easting DOP
 
         break;
         }   
