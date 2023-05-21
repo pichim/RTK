@@ -31,8 +31,10 @@
 #define IMU_PIN_SDA PC_9
 #define IMU_PIN_SCL PA_8
 #define IMU_DO_PRINTF false
-#define IMU_DO_USE_ACC_CALIBRATION false // in case you lift of not leveled, this has to be false
-#define IMU_DO_USE_MAG_CALIBRATION true
+#define IMU_DO_USE_STATIC_ACC_CALIBRATION false  // if this is false then acc gets averaged at the beginning and printed to the console
+#define IMU_DO_USE_STATIC_MAG_CALIBRATION false // if this is false then no mag calibration gets applied, e.g. A_mag = I, b_mag = 0
+#define IMU_THREAD_DO_USE_MAG_FOR_MAHONY_UPDATE true
+
 
 class Data
 {
@@ -166,6 +168,7 @@ namespace Param {
                                                                      0.0642447f,  0.9902065f,  0.0000000f,
                                                                     -0.0060685f,  0.0375249f,  1.0383099f ).finished();
         static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() << -0.0942469f, -0.2001867f, -0.4814042f ).finished();
+        static const Eigen::Vector3f b_acc = ( Eigen::Vector3f() <<  0.1020572f, -0.3512003f,  0.0000000f ).finished();
     }
 }
 #endif /* PARAM_H_ */
