@@ -11,7 +11,7 @@ Mahony::Mahony(float kp, float ki, float Ts)
     Setup(kp, ki, Ts);
 }
 
-void Mahony::Update(Eigen::Vector3f& gyro, Eigen::Vector3f& acc)
+void Mahony::Update(Eigen::Vector3f gyro, Eigen::Vector3f acc)
 {
     Eigen::Vector3f g_n(                                          2.0f * ( m_quat.x()*m_quat.z() - m_quat.w()*m_quat.y() ),
                                                                   2.0f * ( m_quat.y()*m_quat.z() + m_quat.w()*m_quat.x() ),
@@ -21,7 +21,7 @@ void Mahony::Update(Eigen::Vector3f& gyro, Eigen::Vector3f& acc)
     updateOrientation(gyro, e);
 }
 
-void Mahony::Update(Eigen::Vector3f& gyro, Eigen::Vector3f& acc, Eigen::Vector3f& mag)
+void Mahony::Update(Eigen::Vector3f gyro, Eigen::Vector3f acc, Eigen::Vector3f mag)
 {
     Eigen::Matrix3f R = m_quat.toRotationMatrix();
 
@@ -51,7 +51,7 @@ Mahony::~Mahony()
     
 }
 
-void Mahony::Setup(float& kp, float& ki, float& Ts)
+void Mahony::Setup(float kp, float ki, float Ts)
 {
     m_kp = kp;
     m_ki = ki;
@@ -65,7 +65,7 @@ void Mahony::initialise()
     m_rpy.setZero();
 }
 
-Eigen::Vector3f Mahony::quat2rpy(Eigen::Quaternionf& quat)
+Eigen::Vector3f Mahony::quat2rpy(Eigen::Quaternionf quat)
 {
 	// ||quat|| = 1
 	Eigen::Vector3f rpy;
@@ -84,7 +84,7 @@ Eigen::Vector3f Mahony::quat2rpy(Eigen::Quaternionf& quat)
 	return rpy;
 }
 
-void Mahony::updateOrientation(Eigen::Vector3f& gyro, Eigen::Vector3f& e)
+void Mahony::updateOrientation(Eigen::Vector3f gyro, Eigen::Vector3f e)
 {
     m_bias += m_ki * e * m_Ts;
     Eigen::Matrix<float, 4, 3> Q;
