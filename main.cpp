@@ -61,7 +61,7 @@ int main(){
         //printf("relposned = %4.4f, %4.4f, %4.4f\n", data.relPosNED(0), data.relPosNED(1), data.relPosNED(2));
         //printf("pvt = %3.7f, %3.7f, %4.4f, vel= %4.3f, %4.3f, %4.3f\n",data.llh(0),data.llh(1),data.llh(2),data.velNED(0),data.velNED(1),data.velNED(2));
         //printf("dop = %4.2f, %4.2f, %4.2f, %4.2f, %4.2f\n", data.gDOP,data.pDOP,data.tDOP,data.vDOP,data.hDOP);
-        printf("cov = %f, %f, %f, %f\n", data.posCovNN, data.posCovNE, data.posCovND, data.posCovEE);
+        //printf("cov = %f, %f, %f, %f\n", data.posCovNN, data.posCovNE, data.posCovND, data.posCovEE);
         
         if(data.rtk_fix){
             rtk_fix_led = 1;

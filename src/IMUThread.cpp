@@ -34,6 +34,8 @@ void IMUThread::run()
     static Eigen::Vector3f acc_offset;
     gyro_offset.setZero();
     acc_offset.setZero();
+    static Timer timer;
+    timer.start();
 
     while(true) {
         ThisThread::flags_wait_any(m_threadFlag);
@@ -69,7 +71,7 @@ void IMUThread::run()
             mag = m_magCalib.ApplyCalibration(mag);
 
             m_dataMutex.lock();
-
+            m_data.t = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count();
             m_data.gyro = gyro;
             m_data.acc = acc;
             m_data.mag = mag;
@@ -86,8 +88,7 @@ void IMUThread::run()
         }
 
 #if IMU_DO_PRINTF
-        static Timer timer;
-        timer.start();
+        
         float time_ms = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count() * 1.0e-3f;
         printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, ", m_data.gyro(0), m_data.gyro(1), m_data.gyro(2),
                                                                                m_data.acc(0) , m_data.acc(1) , m_data.acc(2) ,

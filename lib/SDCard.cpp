@@ -100,6 +100,11 @@ bool SDCard::write_f_2_sd(float* data, size_t l) {
     return write_2_sd(data, sizeof(float), l);
 }
 
+bool SDCard::write_d_2_sd(double* data, size_t l) {
+    
+    return write_2_sd(data, sizeof(double), l);
+}
+
 
 bool SDCard::write_u32_2_sd(uint32_t* data, size_t l) {
     
@@ -113,10 +118,29 @@ bool SDCard::write_u8_2_sd(uint8_t* data, size_t l) {
 
 //TODO: compress 8 bits into one byte
 bool SDCard::write_bool_2_sd(bool* data, size_t l) {
+    int n = l / 8;
+    int r = l % 8;
+    if (r > 0){
+        n++;
+    }
+    int j = 0;
+    uint8_t buf[16];
 
-    return write_2_sd(data, sizeof(bool), l);
+    while(n){
+        if(n){
+            for(int i = 0; i < 8; i++){
+                buf[j] |= (data[j*8+i] << i);
+            }
+            n--;
+            j++;
+        } else {
+            break;
+        }
+    }
+    //ignore top part for now
+    //return write_2_sd(data, sizeof(bool), l);
+    return write_2_sd(buf, sizeof(bool), j);
 }
-
 
 bool SDCard::close() {
 

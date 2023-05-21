@@ -49,6 +49,7 @@ public:
     Eigen::Vector3f rpy;
 
     uint32_t itow;
+    uint32_t t;
 
     //UBX-NAV-SVIN
     bool base_time_mode;
@@ -96,9 +97,9 @@ public:
 
     //UBX-NAV-HPPOSLLH
     bool invalidLLH;                // if GNSS has no fix this is 1
-    Eigen::Vector3f hpLlh;          // High precision position in Global frame
-    double longitude_hp;            // High precision position
-    double latitude_hp;             // High precision position
+    Eigen::Vector3d hpLlh;          // High precision position in Global frame
+    //double longitude_hp;            // High precision position
+    //double latitude_hp;             // High precision position
     float hMSL;                     // Height above mean sea level
     float hAcc;                     // estimated horizontal accuracy
     float vAcc;                     // estimated vertical accuracy

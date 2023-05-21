@@ -96,21 +96,21 @@ bool GNSS::decode(int i)
                             | ((uint32_t)m_msg[i].data[18] << 16)
                             | ((uint32_t)m_msg[i].data[19] << 24); //height
 
-            float height = (float)temp3 / 1000;     // [m]
+            double height = (double)temp3 / 1000.0f;     // [m]
 
             int32_t temp4 =   (uint32_t)m_msg[i].data[20]
                             | ((uint32_t)m_msg[i].data[21] << 8)
                             | ((uint32_t)m_msg[i].data[22] << 16)
                             | ((uint32_t)m_msg[i].data[23] << 24); //hMSL
 
-            double hMSL = (float)temp4 / 1000;     // [m]
+            double hMSL = (double)temp4 / 1000;     // [m]
 
-            m_data.longitude_hp = lon + ((double)(int8_t)m_msg[i].data[24] / 1000000000.0f);
-            m_data.latitude_hp = lat + ((double)(int8_t)m_msg[i].data[25] / 1000000000.0f);
+            //m_data.longitude_hp = lon + ((double)(int8_t)m_msg[i].data[24] / 1000000000.0f);
+            //m_data.latitude_hp = lat + ((double)(int8_t)m_msg[i].data[25] / 1000000000.0f);
 
-            m_data.hpLlh <<     (float)m_data.longitude_hp,
-                                (float)m_data.latitude_hp,
-                                (height + ((float)(int8_t)m_msg[i].data[26]) / 10000.0f);
+            m_data.hpLlh <<     lon + ((double)(int8_t)m_msg[i].data[24] / 1000000000.0f),
+                                lat + ((double)(int8_t)m_msg[i].data[25] / 1000000000.0f),
+                                (height + ((double)(int8_t)m_msg[i].data[26]) / 10000.0f);
 
             m_data.hMSL = (hMSL + ((float)(int8_t)m_msg[i].data[27]) / 10000);
 
