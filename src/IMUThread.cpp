@@ -8,7 +8,7 @@ IMUThread::IMUThread(Data& data) :
     m_mahony(Param::IMU::kp, Param::IMU::ki, IMU_THREAD_TS_MS * 1.0e-3f),
     m_thread(IMU_THREAD_PRIORITY, IMU_THREAD_SIZE)
 {
-#if IMU_DO_USE_MAG_CALIBRATION
+#if IMU_DO_USE_STATIC_MAG_CALIBRATION
     m_magCalib.SetCalibrationParameter(Param::IMU::A_mag, Param::IMU::b_mag);   
 #endif
 }
@@ -54,14 +54,17 @@ void IMUThread::run()
                 acc_offset  /= avg_cntr;
                 // we have to keep gravity in acc z direction
                 acc_offset(2) = 0.0f;
+#if IMU_DO_USE_STATIC_ACC_CALIBRATION
+                acc_offset = Param::IMU::b_acc;
+#else
+                printf("Averaged acc offset: %.7ff, %.7ff, %.7f\n", acc_offset(0), acc_offset(1), acc_offset(2) );
+#endif
             }
         }
         
         if (imu_is_calibrated) {
             gyro -= gyro_offset;
-#if IMU_DO_USE_ACC_CALIBRATION
             acc -= acc_offset;
-#endif
             mag = m_magCalib.ApplyCalibration(mag);
 
             m_data.gyro = gyro;
