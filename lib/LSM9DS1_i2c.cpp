@@ -119,7 +119,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 0 = 408 Hz   2 = 105 Hz
     // 1 = 211 Hz   3 = 50 Hz
     settings.accel.bandwidth = 3;
-    settings.accel.highResEnable = false;
+    settings.accel.highResEnable = true;
     // accelHighResBandwidth can be any value between 0-3
     // LP cutoff is set to a factor of sample rate
     // 0 = ODR/50    2 = ODR/9
