@@ -243,7 +243,7 @@ bool GNSS::decode(int i)
                              | ((uint32_t)m_msg[i].data[69] << 8)
                              | ((uint32_t)m_msg[i].data[70] << 16)
                              | ((uint32_t)m_msg[i].data[71] << 24)) / 1000.0f; // sAcc
-
+            
             m_data.headAcc = (float)(int32_t)((uint32_t)m_msg[i].data[72]
                              | ((uint32_t)m_msg[i].data[73] << 8)
                              | ((uint32_t)m_msg[i].data[74] << 16)
@@ -257,7 +257,7 @@ bool GNSS::decode(int i)
 
             m_data.magAcc = (float)((uint32_t)m_msg[i].data[90]
                              | ((uint32_t)m_msg[i].data[91] << 8)) / 100.0f; // magAcc
-
+            
             m_data.lastCorrectionAge = (m_msg[i].data[78] >> 1) & 0x0F;
 
         break;

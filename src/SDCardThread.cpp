@@ -38,8 +38,10 @@ void SDCardThread::StartThread()
 void SDCardThread::OpenFile() {
     static bool writing = false;
 
-    if(writing) return;
-
+    if(writing){
+        printf("file already open\n"); //DO NOT REMOVE THIS LINE!!!!
+        return;
+    }
     m_sd.mkfile();
     writing = true;
 }

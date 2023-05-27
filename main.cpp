@@ -64,6 +64,7 @@ int main(){
         //printf("cov = %f, %f, %f, %f\n", data.posCovNN, data.posCovNE, data.posCovND, data.posCovEE);
         printf("gSpeed = %1.4f / %1.4f, headMot = %3.5f / %3.5f, mag = %3.2f / %3.2f\n", data.gSpeed, data.sAcc, data.headMot, data.headAcc, data.magDec, data.magAcc);
         
+
         if(data.rtk_fix){
             rtk_fix_led = 1;
         } else if(data.rtk_float){

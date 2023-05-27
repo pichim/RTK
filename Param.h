@@ -111,8 +111,8 @@ public:
     Eigen::Vector3f llh, velNED;    // position and in Global frame and volecites in NED frame
     float sAcc;                     // estimated speed accuracies
     float gSpeed;                   // ground speed
-    float headMot;               // angle of motion relative to north$
-    float headAcc;
+    float headMot;                  // angle of motion relative to north$
+    float headAcc;                // including this breaks the SD card lib
     float magDec;
     float magAcc;
     uint8_t lastCorrectionAge;      // time since last correction data hase be received (for details see interface description)
@@ -157,7 +157,7 @@ private:
         sAcc = 10000000;               //maybe dont set it to 0 per default
         gSpeed = 0;
         headMot = 0;
-        headAcc = 1000000;
+        //headAcc = 1000000;
         pDOP = 10000000;               //maybe dont set it to 0 per default
         lastCorrectionAge = 255;       //maybe dont set it to 0 per default
     };
