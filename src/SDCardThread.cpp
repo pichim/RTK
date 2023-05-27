@@ -113,14 +113,14 @@ void SDCardThread::run()
             buffer_u32[i_u32++] = m_data.itow;
 
             //UBX-NAV-SVIN (BASE)
-            buffer_b[i_b++] = m_data.base_time_mode;
-            buffer_b[i_b++] = m_data.base_svin_valid;
+            buffer_b[i_b++] = m_data.base_time_mode; //1
+            buffer_b[i_b++] = m_data.base_svin_valid; //2
 
             buffer_f[i_f++] = m_data.meanAcc_SVIN; //17
 
             //UBX-NAV-COV
-            buffer_b[i_b++] = m_data.posCOVvalid;
-            buffer_b[i_b++] = m_data.velCOVvalid;
+            buffer_b[i_b++] = m_data.posCOVvalid; //3
+            buffer_b[i_b++] = m_data.velCOVvalid; //4
 
             buffer_f[i_f++] = m_data.posCovNN; //18
             buffer_f[i_f++] = m_data.posCovNE;
@@ -147,9 +147,9 @@ void SDCardThread::run()
             //UBX-NAV-STATUS
             buffer_u8[i_u8++] = m_data.gnss_fix;
 
-            buffer_b[i_b++] = m_data.diffCorr_available;
+            buffer_b[i_b++] = m_data.diffCorr_available; //5
             buffer_b[i_b++] = m_data.rtk_float;
-            buffer_b[i_b++] = m_data.rtk_fix;
+            buffer_b[i_b++] = m_data.rtk_fix; //7
 
             buffer_u32[i_u32++] = m_data.ttff;
             buffer_u32[i_u32++] = m_data.msss;
@@ -165,7 +165,7 @@ void SDCardThread::run()
             buffer_u32[i_u32++] = m_data.rtk_flags;
 
             //UBX-NAV-HPPOSLLH
-            buffer_b[i_b++] = m_data.invalidLLH;
+            buffer_b[i_b++] = m_data.invalidLLH; //8
 
             buffer_d[i_d++] = m_data.hpLlh(0); //1
             buffer_d[i_d++] = m_data.hpLlh(1);
@@ -178,15 +178,18 @@ void SDCardThread::run()
             buffer_u8[i_u8++] = m_data.fix_type;
             buffer_u8[i_u8++] = m_data.numSV;
 
-            buffer_f[i_f++] = m_data.llh(0); //46
-            buffer_f[i_f++] = m_data.llh(1);
-            buffer_f[i_f++] = m_data.llh(2);
-            buffer_f[i_f++] = m_data.velNED(0);
+            // buffer_f[i_f++] = m_data.llh(0);
+            // buffer_f[i_f++] = m_data.llh(1);
+            // buffer_f[i_f++] = m_data.llh(2);
+            buffer_f[i_f++] = m_data.velNED(0); //46
             buffer_f[i_f++] = m_data.velNED(1);
             buffer_f[i_f++] = m_data.velNED(2);
             buffer_f[i_f++] = m_data.sAcc;
             buffer_f[i_f++] = m_data.gSpeed;
-            buffer_f[i_f++] = m_data.headMotion; //54
+            buffer_f[i_f++] = m_data.headMot;
+            buffer_f[i_f++] = m_data.headAcc;
+            buffer_f[i_f++] = m_data.magDec;
+            buffer_f[i_f++] = m_data.magAcc; //54
 
             buffer_u8[i_u8++] = m_data.lastCorrectionAge;
 

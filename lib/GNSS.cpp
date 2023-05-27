@@ -14,9 +14,10 @@ GNSS::GNSS(PinName rx, PinName tx, Data& data, Mutex& dataMutex) :
 bool GNSS::decode(int i)
 {  
     static bool ret = true;
-#if GNSS_DO_PRINTF
-        //printf("msg id = 0x%02x \n",m_msg[i].id);
 
+#if GNSS_DO_PRINTF
+
+        //printf("msg id = 0x%02x \n",m_msg[i].id);
 #endif
 
     switch(m_msg[i].id){
@@ -188,6 +189,7 @@ bool GNSS::decode(int i)
                           | ((uint32_t)m_msg[i].data[1] << 8)
                           | ((uint32_t)m_msg[i].data[2] << 16)
                           | ((uint32_t)m_msg[i].data[3] << 24); //itow
+            m_data.validMag = (m_msg[i].data[11] >> 3) & 0x1;
 
             m_data.fix_type = m_msg[i].data[20];
             m_data.numSV = m_msg[i].data[23];
@@ -232,14 +234,29 @@ bool GNSS::decode(int i)
                              | ((uint32_t)m_msg[i].data[62] << 16)
                              | ((uint32_t)m_msg[i].data[63] << 24)) / 1000.0f; // ground Speed
 
-            m_data.headMotion = (float)(int32_t)((uint32_t)m_msg[i].data[64]
+            m_data.headMot = (float)(int32_t)((uint32_t)m_msg[i].data[64]
                              | ((uint32_t)m_msg[i].data[65] << 8)
                              | ((uint32_t)m_msg[i].data[66] << 16)
                              | ((uint32_t)m_msg[i].data[67] << 24)) / 100000.0f; // heading
-            
+
+            m_data.sAcc = (float)(int32_t)((uint32_t)m_msg[i].data[68]
+                             | ((uint32_t)m_msg[i].data[69] << 8)
+                             | ((uint32_t)m_msg[i].data[70] << 16)
+                             | ((uint32_t)m_msg[i].data[71] << 24)) / 1000.0f; // sAcc
+
+            m_data.headAcc = (float)(int32_t)((uint32_t)m_msg[i].data[72]
+                             | ((uint32_t)m_msg[i].data[73] << 8)
+                             | ((uint32_t)m_msg[i].data[74] << 16)
+                             | ((uint32_t)m_msg[i].data[75] << 24)) / 100000.0f; // headAcc
+
             m_data.pDOP = (float)((uint32_t)m_msg[i].data[76]
                              | ((uint32_t)m_msg[i].data[77] << 8)) / 100.0f; // Position DOP
 
+            m_data.magDec = (float)(int16_t)((uint32_t)m_msg[i].data[88]
+                             | ((uint32_t)m_msg[i].data[89] << 8)) / 100.0f; // magDec
+
+            m_data.magAcc = (float)((uint32_t)m_msg[i].data[90]
+                             | ((uint32_t)m_msg[i].data[91] << 8)) / 100.0f; // magAcc
 
             m_data.lastCorrectionAge = (m_msg[i].data[78] >> 1) & 0x0F;
 
@@ -283,11 +300,13 @@ bool GNSS::decode(int i)
         }   
         //
         default:
+        {
 #if GNSS_DO_PRINTF
             printf("msg not supported: 0x%x\n",m_msg[i].id);
             ret = false;
         
-#endif
+#endif  
+        }
     }
     m_msg[i].reset();
     return ret;

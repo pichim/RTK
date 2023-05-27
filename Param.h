@@ -8,7 +8,7 @@
 #define GNSS_RTK_FIX_LED PB_9
 #define GNSS_FIX_LED PB_8
 #define GNSS_THREAD_SIZE 4096
-#define GNSS_DO_PRINTF true
+#define GNSS_DO_PRINTF false
 #define GNSS_RX PA_10
 #define GNSS_TX PB_6
 #define GNSS_UART_BAUD 921600
@@ -31,8 +31,8 @@
 #define IMU_PIN_SDA PC_9
 #define IMU_PIN_SCL PA_8
 #define IMU_DO_PRINTF false
-#define IMU_DO_USE_STATIC_ACC_CALIBRATION false  // if this is false then acc gets averaged at the beginning and printed to the console
-#define IMU_DO_USE_STATIC_MAG_CALIBRATION false // if this is false then no mag calibration gets applied, e.g. A_mag = I, b_mag = 0
+#define IMU_DO_USE_STATIC_ACC_CALIBRATION true  // if this is false then acc gets averaged at the beginning and printed to the console
+#define IMU_DO_USE_STATIC_MAG_CALIBRATION true // if this is false then no mag calibration gets applied, e.g. A_mag = I, b_mag = 0
 #define IMU_THREAD_DO_USE_MAG_FOR_MAHONY_UPDATE true
 
 
@@ -106,11 +106,15 @@ public:
 
     //UBX-NAV-PVT
     uint8_t fix_type;               // see interface description for details
+    bool validMag;
     uint8_t numSV;                  // number of satellites used for position solution
     Eigen::Vector3f llh, velNED;    // position and in Global frame and volecites in NED frame
     float sAcc;                     // estimated speed accuracies
     float gSpeed;                   // ground speed
-    float headMotion;               // angle of motion relative to north
+    float headMot;               // angle of motion relative to north$
+    float headAcc;
+    float magDec;
+    float magAcc;
     uint8_t lastCorrectionAge;      // time since last correction data hase be received (for details see interface description)
 
     //UBX-NAV-TIMEUTC
@@ -132,7 +136,7 @@ private:
 
         base_time_mode = 0;
         base_svin_valid = 0;
-        meanAcc_SVIN = 0;       //maybe dont set it to 0 per default
+        meanAcc_SVIN = 1000000;       //maybe dont set it to 0 per default
         itow = 0;
 
         refstationid = 0;
@@ -143,17 +147,19 @@ private:
         invalidLLH = 1;
         hpLlh.setZero();
         hMSL = 0;
-        hAcc = 0;               //maybe dont set it to 0 per default
-        vAcc = 0;               //maybe dont set it to 0 per default
+        hAcc = 10000000;               //maybe dont set it to 0 per default
+        vAcc = 10000000;               //maybe dont set it to 0 per default
 
         fix_type = 0;
         numSV = 0;
         llh.setZero();
         velNED.setZero();
-        sAcc = 0;               //maybe dont set it to 0 per default
+        sAcc = 10000000;               //maybe dont set it to 0 per default
         gSpeed = 0;
-        pDOP = 0;               //maybe dont set it to 0 per default
-        lastCorrectionAge = 0;  //maybe dont set it to 0 per default
+        headMot = 0;
+        headAcc = 1000000;
+        pDOP = 10000000;               //maybe dont set it to 0 per default
+        lastCorrectionAge = 255;       //maybe dont set it to 0 per default
     };
 };
 
@@ -165,11 +171,11 @@ namespace Param {
         // ki = kp^2 / 3;
         static const float kp = 2.0f * 2.0f;
         static const float ki = kp * kp / 3.0f;
-        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9714836f,  0.0000000f,  0.0000000f,
-                                                                     0.0642447f,  0.9902065f,  0.0000000f,
-                                                                    -0.0060685f,  0.0375249f,  1.0383099f ).finished();
-        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() << -0.0942469f, -0.2001867f, -0.4814042f ).finished();
-        static const Eigen::Vector3f b_acc = ( Eigen::Vector3f() <<  0.1020572f, -0.3512003f,  0.0000000f ).finished();
+        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9858873f,  0.0000000f,  0.0000000f,
+                                                                     0.0105822f,  0.9857083f,  0.0000000f,
+                                                                     0.0572703f,  0.0053311f,  1.0284045f ).finished(); //from 22.05.23
+        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() <<  0.4574184f, -0.3294953f,  0.3824048f ).finished(); //from 22.05.23
+        static const Eigen::Vector3f b_acc = ( Eigen::Vector3f() <<  0.1982683f, -0.1430836f,  0.0000000f ).finished();
     }
 }
 #endif /* PARAM_H_ */
