@@ -180,9 +180,9 @@ void SDCardThread::run()
             buffer_u8[i_u8++] = m_data.fix_type;
             buffer_u8[i_u8++] = m_data.numSV;
 
-            // buffer_f[i_f++] = m_data.llh(0);
-            // buffer_f[i_f++] = m_data.llh(1);
-            // buffer_f[i_f++] = m_data.llh(2);
+            //buffer_f[i_f++] = m_data.llh(0); //46
+            //buffer_f[i_f++] = m_data.llh(1);
+            //buffer_f[i_f++] = m_data.llh(2);
             buffer_f[i_f++] = m_data.velNED(0); //46
             buffer_f[i_f++] = m_data.velNED(1);
             buffer_f[i_f++] = m_data.velNED(2);

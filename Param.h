@@ -112,7 +112,7 @@ public:
     float sAcc;                     // estimated speed accuracies
     float gSpeed;                   // ground speed
     float headMot;                  // angle of motion relative to north$
-    float headAcc;                // including this breaks the SD card lib
+    float headAcc;
     float magDec;
     float magAcc;
     uint8_t lastCorrectionAge;      // time since last correction data hase be received (for details see interface description)
