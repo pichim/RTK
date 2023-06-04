@@ -90,7 +90,11 @@ Eigen::Vector3f Mahony::quat2rpy(Eigen::Quaternionf quat)
 Eigen::Vector3f Mahony::calcRotationError(Eigen::Vector3f v1, Eigen::Vector3f v2)
 {
     // https://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane
-    Eigen::Vector3f vn = v1.cross(v2).normalized();
+    Eigen::Vector3f vn = v1.cross(v2);
+    float vn_norm = vn.norm();
+    if (vn_norm > 1e-6f) {
+        vn /= vn_norm;
+    }
     float ang = atan2f(v1.cross(v2).dot(vn), v1.dot(v2));
     return ang * vn;
 }
