@@ -57,7 +57,7 @@ void IMUThread::run()
 #if IMU_DO_USE_STATIC_ACC_CALIBRATION
                 acc_offset = Param::IMU::b_acc;
 #else
-                printf("Averaged acc offset: %.7ff, %.7ff, %.7f\n", acc_offset(0), acc_offset(1), acc_offset(2) );
+                printf("Averaged acc offset: %.7ff, %.7ff, %.7ff\n", acc_offset(0), acc_offset(1), acc_offset(2) );
 #endif
             }
         }

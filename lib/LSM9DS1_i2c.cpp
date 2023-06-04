@@ -210,9 +210,9 @@ float LSM9DS1::readGyroZ(){return gyroZ;}
 float LSM9DS1::readAccX(){return -accX;}
 float LSM9DS1::readAccY(){return accY;}
 float LSM9DS1::readAccZ(){return accZ;}
-float LSM9DS1::readMagX(){return -magX;}
-float LSM9DS1::readMagY(){return -magY;}
-float LSM9DS1::readMagZ(){return -magZ;}
+float LSM9DS1::readMagX(){return magX;}
+float LSM9DS1::readMagY(){return magY;}
+float LSM9DS1::readMagZ(){return magZ;}
 
 void LSM9DS1::initGyro()
 {
