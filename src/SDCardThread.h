@@ -29,6 +29,7 @@ private:
     
     bool m_sdThread_running;
     bool m_sd_present;
+    bool m_file_open;
     void run();
     void sendThreadFlag();
 };

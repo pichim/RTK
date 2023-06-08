@@ -23,6 +23,7 @@ class SDCard{
     bool write_u8_2_sd(uint8_t* data, size_t l);
     bool write_bool_2_sd(bool* data, size_t l);
     bool close();
+    bool unmount();
 
     private:
     bool write_2_sd(void* data, size_t s, size_t l);

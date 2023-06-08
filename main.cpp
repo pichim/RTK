@@ -62,7 +62,7 @@ int main(){
         //printf("pvt = %3.7f, %3.7f, %4.4f, vel= %4.3f, %4.3f, %4.3f\n",data.llh(0),data.llh(1),data.llh(2),data.velNED(0),data.velNED(1),data.velNED(2));
         //printf("dop = %4.2f, %4.2f, %4.2f, %4.2f, %4.2f\n", data.gDOP,data.pDOP,data.tDOP,data.vDOP,data.hDOP);
         //printf("cov = %f, %f, %f, %f\n", data.posCovNN, data.posCovNE, data.posCovND, data.posCovEE);
-        printf("gSpeed = %1.4f / %1.4f, headMot = %3.5f / %3.5f, mag = %3.2f / %3.2f\n", data.gSpeed, data.sAcc, data.headMot, data.headAcc, data.magDec, data.magAcc);
+        //printf("gSpeed = %1.4f / %1.4f, headMot = %3.5f / %3.5f, mag = %3.2f / %3.2f\n", data.gSpeed, data.sAcc, data.headMot, data.headAcc, data.magDec, data.magAcc);
         //printf("acc = %f, %f, %f\n", data.acc(0), data.acc(1), data.acc(2));
         //printf("gyro = %f, %f, %f\n", data.gyro(0), data.gyro(1), data.gyro(2));
         

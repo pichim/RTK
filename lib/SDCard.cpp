@@ -117,7 +117,10 @@ bool SDCard::write_u8_2_sd(uint8_t* data, size_t l) {
 }
 
 //TODO: compress 8 bits into one byte
-bool SDCard::write_bool_2_sd(bool* data, size_t l) {
+bool SDCard::write_bool_2_sd(bool* data, size_t l)
+{
+    uint8_t buf_data[l];
+    memcpy(buf_data, data, l);
     int n = l / 8;
     int r = l % 8;
     if (r > 0){
@@ -128,12 +131,12 @@ bool SDCard::write_bool_2_sd(bool* data, size_t l) {
 
     while(n){
         for(int i = 0; i < 8; i++){
-            buf[j] |= (data[j*8+i] << i);
+            buf[j] |= (buf_data[j*8+i] << i);
         }
         n--;
         j++;
     }
-    //ignore top part for now
+    printf("%02x\n",buf[1]);
     //return write_2_sd(data, sizeof(bool), l);
     return write_2_sd(buf, sizeof(bool), j);
 }
@@ -146,15 +149,23 @@ bool SDCard::close() {
         fclose(m_fp);
         m_file_valid = 0;
         printf("closing file\n");
+    } else{
+        return 0;
     }
+    //m_sdMutex.unlock();
+
+    return 1;
+}
+
+bool SDCard::unmount()
+{
     if(m_init_success){
         m_sd.deinit(); //must be here else expect to have crashes
         m_init_success = 0;
         printf("unmounting SD card\n");
+    } else{
+        return 0;
     }
-
-    //m_sdMutex.unlock();
-
     return 1;
 }
 

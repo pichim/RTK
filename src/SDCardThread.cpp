@@ -10,6 +10,7 @@ SDCardThread::SDCardThread(Data& data, Mutex& mutex_1, Mutex& mutex_2) :
 {
     m_sdThread_running = false;
     m_sd_present = false;
+    m_file_open = false;
     m_data = data;
     //m_buffer = (uint8_t*)malloc(SDCARD_BUFFER_SIZE);
     if(!m_sd.init()) {
@@ -45,8 +46,10 @@ void SDCardThread::OpenFile() {
     m_sd.mkfile();
     writing = true;
 }
+
 void SDCardThread::CloseFile() {
     m_sd.close();
+    //m_sd.unmount();
     //free(m_buffer);
 }
 
