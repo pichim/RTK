@@ -16,7 +16,8 @@ void Mahony::Update(Eigen::Vector3f gyro, Eigen::Vector3f acc)
     Eigen::Vector3f g_n(                                          2.0f * ( m_quat.x()*m_quat.z() - m_quat.w()*m_quat.y() ),
                                                                   2.0f * ( m_quat.y()*m_quat.z() + m_quat.w()*m_quat.x() ),
                          ( m_quat.w()*m_quat.w() - m_quat.x()*m_quat.x() - m_quat.y()*m_quat.y() + m_quat.z()*m_quat.z() )  );
-    Eigen::Vector3f e = acc.normalized().cross( g_n.normalized() );
+    //Eigen::Vector3f e = acc.normalized().cross( g_n.normalized() );
+    Eigen::Vector3f e = calcRotationError(acc, g_n);
 
     updateOrientation(gyro, e);
 }
@@ -26,12 +27,14 @@ void Mahony::Update(Eigen::Vector3f gyro, Eigen::Vector3f acc, Eigen::Vector3f m
     Eigen::Matrix3f R = m_quat.toRotationMatrix();
 
     Eigen::Vector3f g_n = R.block<1,3>(2,0).transpose();
-    Eigen::Vector3f e = acc.normalized().cross( g_n.normalized() );
+    //Eigen::Vector3f e = acc.normalized().cross( g_n.normalized() );
+    Eigen::Vector3f e = calcRotationError(acc, g_n);
 
     Eigen::Vector3f h = R * mag.normalized();
     h(2) = 0.0f;
     Eigen::Vector3f b(h.norm(), 0.0f, 0.0f);
-    e += R.transpose() * h.cross(b);
+    //e += R.transpose() * h.cross(b);
+    e += R.transpose() * calcRotationError(h, b) * h.norm();
 
     updateOrientation(gyro, e);
 }
@@ -84,7 +87,17 @@ Eigen::Vector3f Mahony::quat2rpy(Eigen::Quaternionf quat)
 	return rpy;
 }
 
-void Mahony::updateOrientation(Eigen::Vector3f gyro, Eigen::Vector3f e)
+Eigen::Vector3f Mahony::calcRotationError(Eigen::Vector3f v1, Eigen::Vector3f v2)
+{
+    // https://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane
+    Eigen::Vector3f vn = v1.cross(v2);
+    float vn_norm = vn.norm();
+    if (vn_norm > 1e-6f) {
+        vn /= vn_norm;
+    }
+    float ang = atan2f(v1.cross(v2).dot(vn), v1.dot(v2));
+    return ang * vn;
+}void Mahony::updateOrientation(Eigen::Vector3f gyro, Eigen::Vector3f e)
 {
     m_bias += m_ki * e * m_Ts;
     Eigen::Matrix<float, 4, 3> Q;

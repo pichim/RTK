@@ -171,10 +171,16 @@ namespace Param {
         // ki = kp^2 / 3;
         static const float kp = 2.0f * 2.0f;
         static const float ki = kp * kp / 3.0f;
-        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9858873f,  0.0000000f,  0.0000000f,
-                                                                     0.0105822f,  0.9857083f,  0.0000000f,
-                                                                     0.0572703f,  0.0053311f,  1.0284045f ).finished(); //from 22.05.23
-        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() <<  0.4574184f, -0.3294953f,  0.3824048f ).finished(); //from 22.05.23
+        /*
+        A_mag <<  0.9865819f,  0.0000000f,  0.0000000f,
+                  0.0159662f,  0.9881347f,  0.0000000f,
+                  0.0939640f,  0.0281666f,  1.0252834f;
+        b_mag <<  0.4564076f, -0.3276939f,  0.4152736f;
+        */
+        static const Eigen::Matrix3f A_mag = ( Eigen::Matrix3f() <<  0.9865819f,  0.0000000f,  0.0000000f,
+                                                                     0.0159662f,  0.9881347f,  0.0000000f,
+                                                                     0.0939640f,  0.0281666f,  1.0252834f ).finished(); //from 4.6.23
+        static const Eigen::Vector3f b_mag = ( Eigen::Vector3f() <<  0.4564076f, -0.3276939f,  0.4152736f ).finished(); //from 4.6.23
         static const Eigen::Vector3f b_acc = ( Eigen::Vector3f() <<  0.1982683f, -0.1430836f,  0.0000000f ).finished();
     }
 }

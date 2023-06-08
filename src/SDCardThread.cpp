@@ -90,7 +90,7 @@ void SDCardThread::run()
                                                                             m_data.mag(0) , m_data.mag(1) , m_data.mag(2) );
 #endif
             m_dataMutex_1.lock();
-
+            
             buffer_f[i_f++] = m_data.gyro(0); //1
             buffer_f[i_f++] = m_data.gyro(1);
             buffer_f[i_f++] = m_data.gyro(2);

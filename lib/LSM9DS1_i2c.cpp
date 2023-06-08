@@ -82,7 +82,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 1 = 14.9    4 = 238
     // 2 = 59.5    5 = 476
     // 3 = 119     6 = 952
-    settings.gyro.sampleRate = 5;
+    settings.gyro.sampleRate = 2;
     // gyro cutoff frequency: value between 0-3
     // Actual value of cutoff frequency depends
     // on sample rate.
@@ -113,13 +113,13 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 1 = 10 Hz    4 = 238 Hz
     // 2 = 50 Hz    5 = 476 Hz
     // 3 = 119 Hz   6 = 952 Hz
-    settings.accel.sampleRate = 5;
+    settings.accel.sampleRate = 2;
     // Accel cutoff freqeuncy can be any value between -1 - 3. 
     // -1 = bandwidth determined by sample rate
     // 0 = 408 Hz   2 = 105 Hz
     // 1 = 211 Hz   3 = 50 Hz
-    settings.accel.bandwidth = 3;
-    settings.accel.highResEnable = false;
+    settings.accel.bandwidth = -1;
+    settings.accel.highResEnable = true;
     // accelHighResBandwidth can be any value between 0-3
     // LP cutoff is set to a factor of sample rate
     // 0 = ODR/50    2 = ODR/9
@@ -210,9 +210,9 @@ float LSM9DS1::readGyroZ(){return gyroZ;}
 float LSM9DS1::readAccX(){return -accX;}
 float LSM9DS1::readAccY(){return accY;}
 float LSM9DS1::readAccZ(){return accZ;}
-float LSM9DS1::readMagX(){return -magX;}
-float LSM9DS1::readMagY(){return -magY;}
-float LSM9DS1::readMagZ(){return -magZ;}
+float LSM9DS1::readMagX(){return magX;}
+float LSM9DS1::readMagY(){return magY;}
+float LSM9DS1::readMagZ(){return magZ;}
 
 void LSM9DS1::initGyro()
 {

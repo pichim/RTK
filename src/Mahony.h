@@ -29,6 +29,7 @@ private:
     void initialise();
     void updateOrientation(Eigen::Vector3f gyro, Eigen::Vector3f e);
     Eigen::Vector3f quat2rpy(Eigen::Quaternionf quat);
+    Eigen::Vector3f calcRotationError(Eigen::Vector3f v1, Eigen::Vector3f v2);
 };
 
 #endif /* MAHONY_H_ */
