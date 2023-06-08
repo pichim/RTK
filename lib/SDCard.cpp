@@ -136,7 +136,7 @@ bool SDCard::write_bool_2_sd(bool* data, size_t l)
         n--;
         j++;
     }
-    printf("%02x\n",buf[1]);
+    //printf("%02x\n",buf[1]);
     //return write_2_sd(data, sizeof(bool), l);
     return write_2_sd(buf, sizeof(bool), j);
 }
