@@ -90,7 +90,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     //          1 ->  28 Hz
     //          2 ->  57 Hz
     //          3 -> 100 Hz
-    settings.gyro.bandwidth = 1; 
+    settings.gyro.bandwidth = 0; 
     settings.gyro.lowPowerEnable = false;
     settings.gyro.HPFEnable = false;
     // Gyro HPF cutoff frequency: value between 0-9
