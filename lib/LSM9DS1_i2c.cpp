@@ -82,7 +82,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 1 = 14.9    4 = 238
     // 2 = 59.5    5 = 476
     // 3 = 119     6 = 952
-    settings.gyro.sampleRate = 2;
+    settings.gyro.sampleRate = 5;
     // gyro cutoff frequency: value between 0-3
     // Actual value of cutoff frequency depends
     // on sample rate.
@@ -90,7 +90,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     //          1 ->  28 Hz
     //          2 ->  57 Hz
     //          3 -> 100 Hz
-    settings.gyro.bandwidth = 1; 
+    settings.gyro.bandwidth = 0; 
     settings.gyro.lowPowerEnable = false;
     settings.gyro.HPFEnable = false;
     // Gyro HPF cutoff frequency: value between 0-9
@@ -113,12 +113,12 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     // 1 = 10 Hz    4 = 238 Hz
     // 2 = 50 Hz    5 = 476 Hz
     // 3 = 119 Hz   6 = 952 Hz
-    settings.accel.sampleRate = 2;
+    settings.accel.sampleRate = 5;
     // Accel cutoff freqeuncy can be any value between -1 - 3. 
     // -1 = bandwidth determined by sample rate
     // 0 = 408 Hz   2 = 105 Hz
     // 1 = 211 Hz   3 = 50 Hz
-    settings.accel.bandwidth = -1;
+    settings.accel.bandwidth = 3;
     settings.accel.highResEnable = true;
     // accelHighResBandwidth can be any value between 0-3
     // LP cutoff is set to a factor of sample rate
