@@ -134,8 +134,8 @@ private:
         quat.setIdentity();
         rpy.setZero();
 
-        base_time_mode = 0;
-        base_svin_valid = 0;
+        base_time_mode = 1;
+        base_svin_valid = 1;
         meanAcc_SVIN = 1000000;       //maybe dont set it to 0 per default
         itow = 0;
 

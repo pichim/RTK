@@ -455,6 +455,7 @@ bool GNSS::init()
     m_uart.set_blocking(false);
     m_uart.set_format(8,BufferedSerial::None,1);
     m_msg_index = 0;
+    set_time(date2sec(1997, 3, 1, 4, 5, 0));
     return true;
 }
 

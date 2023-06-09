@@ -132,11 +132,12 @@ bool SDCard::write_bool_2_sd(bool* data, size_t l)
     while(n){
         for(int i = 0; i < 8; i++){
             buf[j] |= (buf_data[j*8+i] << i);
+            //printf("%d",buf_data[j*8+i]);
         }
         n--;
         j++;
     }
-    //printf("%02x\n",buf[1]);
+    //printf("\t%02x\n",buf[0]);
     //return write_2_sd(data, sizeof(bool), l);
     return write_2_sd(buf, sizeof(bool), j);
 }
