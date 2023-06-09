@@ -32,7 +32,7 @@
 #define IMU_PIN_SCL PA_8
 #define IMU_DO_PRINTF false
 #define IMU_DO_USE_STATIC_ACC_CALIBRATION true  // if this is false then acc gets averaged at the beginning and printed to the console
-#define IMU_DO_USE_STATIC_MAG_CALIBRATION true // if this is false then no mag calibration gets applied, e.g. A_mag = I, b_mag = 0
+#define IMU_DO_USE_STATIC_MAG_CALIBRATION false // if this is false then no mag calibration gets applied, e.g. A_mag = I, b_mag = 0
 #define IMU_THREAD_DO_USE_MAG_FOR_MAHONY_UPDATE true
 
 

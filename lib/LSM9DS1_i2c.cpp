@@ -77,7 +77,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
     settings.gyro.enableY = true;
     settings.gyro.enableZ = true;
     // gyro scale can be 245, 500, or 2000 dps (degree per second)
-    settings.gyro.scale = 500;
+    settings.gyro.scale = 2000;
     // gyro sample rate: value between 1-6 in Hz
     // 1 = 14.9    4 = 238
     // 2 = 59.5    5 = 476
