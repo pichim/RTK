@@ -3,7 +3,7 @@
 
 #include <mbed.h>
 
-#include "param.h"
+#include "Param.h"
 
 class Mahony
 {
@@ -17,7 +17,8 @@ public:
     void Update(Eigen::Vector3f gyro, Eigen::Vector3f acc, Eigen::Vector3f mag);
     Eigen::Quaternionf GetOrientationAsQuaternion();
     Eigen::Vector3f GetOrientationAsRPYAngles();
-        
+    float GetTiltAngle();
+
 private:
     float m_kp = 0.0f;
     float m_ki = 0.0f;
@@ -25,6 +26,7 @@ private:
     Eigen::Quaternionf m_quat;
     Eigen::Vector3f m_bias;
     Eigen::Vector3f m_rpy;
+    float m_tilt = 0.0f;
 
     void initialise();
     void updateOrientation(Eigen::Vector3f gyro, Eigen::Vector3f e);

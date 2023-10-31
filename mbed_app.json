@@ -3,7 +3,9 @@
         "*": {
             "target.components_add": ["SD"],
             "target.printf_lib": "std",
-            "platform.stdio-baud-rate": 115200
+            "platform.stdio-baud-rate": 115200,
+            "drivers.uart-serial-rxbuf-size": 512,
+            "sd.INIT_FREQUENCY": 100000
         }
     }
 }

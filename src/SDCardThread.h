@@ -3,7 +3,7 @@
 
 #include <mbed.h>
 
-#include "param.h"
+#include "Param.h"
 #include "ThreadFlag.h"
 #include "SDCard.h"
 

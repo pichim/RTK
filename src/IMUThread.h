@@ -3,22 +3,23 @@
 
 #include <mbed.h>
 
-#include "param.h"
+#include "Param.h"
 #include "ThreadFlag.h"
-#include "LSM9DS1_i2c.h"
+#include "LSM9DS1.h"
 #include "LinearCharacteristics3.h"
 #include "Mahony.h"
 
 class IMUThread
 {
 public:
-    IMUThread(Data& data);
+    IMUThread(Data& data, Mutex& mutex);
     virtual ~IMUThread();
 
     void StartThread();
     
 private:
     Data& m_data;
+    Mutex& m_dataMutex;
     LSM9DS1 m_imu;
     LinearCharacteristics3 m_magCalib;
     Mahony m_mahony;
